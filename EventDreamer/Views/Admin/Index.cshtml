@@ -1,0 +1,191 @@
+﻿@{
+    ViewBag.Title = "Admin Panel";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Admin Panel - EventDreamer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .bg-image {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.35)), url('/Images/pozadina.png');
+            background-size: cover;
+            background-position: center;
+            height: 100%;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.05);
+        }
+
+            .sidebar .logo-text {
+                font-size: 20px;
+                font-weight: 700;
+                color: #cc0000;
+                margin-bottom: 40px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .sidebar-menu li {
+                margin-bottom: 15px;
+            }
+
+            .sidebar-menu a {
+                display: block;
+                padding: 12px 15px;
+                color: #000;
+                font-weight: 600;
+                text-decoration: none;
+                border-radius: 10px;
+                transition: all 0.3s;
+            }
+
+                .sidebar-menu a:hover, .sidebar-menu a.active {
+                    background: rgba(255, 255, 255, 0.7);
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+                }
+
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .welcome-header {
+            margin-bottom: 40px;
+        }
+
+            .welcome-header h1 {
+                font-size: 32px;
+                font-weight: 700;
+                color: #000;
+                margin: 0 0 10px 0;
+            }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-icon {
+            font-size: 30px;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: #222;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        .btn-action {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #ffccd5;
+            color: #000;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            background: #ffccd5;
+            text-align: center;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-image">
+        <div class="sidebar">
+            <div class="logo-text">⚙️ Admin Sistem</div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active">📊 Kontrolna Tabla</a></li>
+                <li><a href="#">💼 Upravljanje Vendorima</a></li>
+                <li><a href="#">👥 Korisnički Nalozi</a></li>
+                <li><a href="#">📈 Izvještaji i Statistika</a></li>
+            </ul>
+            <a href="@Url.Action("Index", "Home")" class="logout-btn" style="display: block; padding: 12px 15px; color: #000; text-decoration: none; border-radius: 10px;">Odjavi se</a>
+        </div>
+
+        <div class="main-content">
+            <div class="welcome-header">
+                <h1>Dobrodošli u Admin Panel 🔧</h1>
+                <p style="font-weight: 600;">Sistem za administraciju i kontrolu EventDreamer platforme.</p>
+            </div>
+
+            <div class="card-grid">
+                <div class="glass-card">
+                    <div class="card-icon">🏬</div>
+                    <div class="card-title">Odobravanje Vendora</div>
+                    <div class="card-desc">Pregledajte nove prijave restorana, bendova i fotografa i odobrite njihove profile na sistemu.</div>
+                    <a href="#" class="btn-action">Pregledaj zahtjeve</a>
+                </div>
+
+                <div class="glass-card">
+                    <div class="card-icon">👥</div>
+                    <div class="card-title">Upravljanje Korisnicima</div>
+                    <div class="card-desc">Pregled svih registrovanih klijenata, blokiranje naloga i izmjena osnovnih privilegija.</div>
+                    <a href="#" class="btn-action">Otvori listu</a>
+                </div>
+
+                <div class="glass-card">
+                    <div class="card-icon">📊</div>
+                    <div class="card-title">Izvještaji Baze Podataka</div>
+                    <div class="card-desc">Statistički pregled ukupnog broja zakazanih vjenčanja i proslava kroz procedure.</div>
+                    <a href="#" class="btn-action">Pogledaj statistiku</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

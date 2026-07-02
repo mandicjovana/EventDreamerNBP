@@ -1,0 +1,197 @@
+﻿@{
+    ViewBag.Title = "Korisnički Dashboard";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Dashboard - EventDreamer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .bg-image {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.35)), url('/Images/pozadina.png');
+            background-size: cover;
+            background-position: center;
+            height: 100%;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.05);
+        }
+
+            .sidebar .logo-text {
+                font-size: 22px;
+                font-weight: 700;
+                color: #000;
+                margin-bottom: 40px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .sidebar-menu li {
+                margin-bottom: 15px;
+            }
+
+            .sidebar-menu a {
+                display: block;
+                padding: 12px 15px;
+                color: #000;
+                font-weight: 600;
+                text-decoration: none;
+                border-radius: 10px;
+                transition: all 0.3s;
+            }
+
+                .sidebar-menu a:hover {
+                    background: rgba(255, 255, 255, 0.6);
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+                }
+
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .welcome-header {
+            margin-bottom: 40px;
+        }
+
+            .welcome-header h1 {
+                font-size: 32px;
+                font-weight: 700;
+                color: #000;
+                margin: 0 0 10px 0;
+            }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+
+            .glass-card:hover {
+                transform: translateY(-5px);
+            }
+
+        .card-icon {
+            font-size: 30px;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: #222;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        .btn-action {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #f3d1e0;
+            color: #000;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            background: #ffccd5;
+            text-align: center;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-image">
+        <div class="sidebar">
+            <div class="logo-text">EventDreamer</div>
+            <ul class="sidebar-menu">
+                <li><a href="#" style="background: rgba(255, 255, 255, 0.6);">🏠 Kontrolna tabla</a></li>
+                <li><a href="#">🎉 Moji Događaji</a></li>
+                <li><a href="#">👥 Lista Gostiju</a></li>
+                <li><a href="#">💰 Budžet i Troškovi</a></li>
+                <li><a href="#">📸 Pronađi Vendore</a></li>
+            </ul>
+            <a href="@Url.Action("Index", "Home")" class="logout-btn" style="display: block; padding: 12px 15px; color: #000; text-decoration: none; border-radius: 10px;">Odjavi se</a>
+        </div>
+        <div class="main-content">
+            <div class="welcome-header">
+                <h1>Dobrodošli nazad! ✨</h1>
+                <p>Sve što Vam je potrebno za organizaciju savršenog događaja nalazi se na jednom mjestu.</p>
+            </div>
+            <div class="card-grid">
+                <div class="glass-card">
+                    <div class="card-icon">📅</div>
+                    <div class="card-title">Moji Događaji</div>
+                    <div class="card-desc">Kreirajte i upravljajte detaljima Vašeg vjenčanja, rođendana ili proslave.</div>
+                    <a href="#" class="btn-action">Upravljaj</a>
+                </div>
+                <div class="glass-card">
+                    <div class="card-icon">👥</div>
+                    <div class="card-title">Lista Gostiju</div>
+                    <div class="card-desc">Ubacite goste, pratite ko je potvrdio dolazak i rasporedite ih po stolovima.</div>
+                    <a href="#" class="btn-action">Pregledaj</a>
+                </div>
+                <div class="glass-card">
+                    <div class="card-icon">💰</div>
+                    <div class="card-title">Budžet i Troškovi</div>
+                    <div class="card-desc">Pratite troškove, unosite uplate i koristite kalkulator za preostali budžet.</div>
+                    <a href="#" class="btn-action">Izračunaj</a>
+                </div>
+                <div class="glass-card">
+                    <div class="card-icon">🔍</div>
+                    <div class="card-title">Pretraga Vendora</div>
+                    <div class="card-desc">Pretražite fotografe, restorane i dekoraciju po lokaciji, kategoriji i cijeni.</div>
+                    <a href="#" class="btn-action">Pretraži</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

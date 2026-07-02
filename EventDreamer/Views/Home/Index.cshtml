@@ -1,0 +1,103 @@
+﻿@{
+    ViewBag.Title = "Početna";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventDreamer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .bg-image {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)), url('/Images/pozadina.png');
+            background-size: cover;
+            background-position: center;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .content-container {
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .logo {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+
+        .main-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: #000000;
+            margin: 0 0 20px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #111111;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            font-weight: 600;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn-custom {
+            display: inline-block;
+            padding: 12px 35px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            color: #000000;
+            border: 2px solid #000000;
+            border-radius: 25px;
+            background: transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+            .btn-custom:hover {
+                background: #000000;
+                color: #ffffff;
+            }
+    </style>
+</head>
+<body>
+    <div class="bg-image">
+        <div class="content-container">
+            <img src="/Images/logo.png" class="logo" alt="EventDreamer Logo" />
+            <h1 class="main-title">EventDreamer</h1>
+            <p class="subtitle">
+                "Zaboravite na stres oko organizacije. Pronađite idealan prostor, ritam koji pokreće i dekoraciju koja oduzima dah – sve na jedan klik od vas."
+            </p>
+            <div class="btn-container">
+                <a href="@Url.Action("Login", "Account")" class="btn-custom">Prijavi se</a>
+                <a href="@Url.Action("Register", "Account")" class="btn-custom">Registruj se</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

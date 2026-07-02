@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="e0e8892136bc4c8f9eb20c557e47e209" Name="Diagram1">
+        <EntityTypeShape EntityType="EventDreamerDBModel.DietaryRequirement" Width="1.5" PointX="9.75" PointY="6.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="EventDreamerDBModel.Event" Width="1.5" PointX="5.25" PointY="4.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EventDreamerDBModel.EventType" Width="1.5" PointX="3" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="EventDreamerDBModel.Expens" Width="1.5" PointX="7.5" PointY="2.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="EventDreamerDBModel.Guest" Width="1.5" PointX="7.5" PointY="6.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EventDreamerDBModel.Role" Width="1.5" PointX="0.75" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EventDreamerDBModel.Task" Width="1.5" PointX="7.5" PointY="9.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="EventDreamerDBModel.User" Width="1.5" PointX="3" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EventDreamerDBModel.VendorCategory" Width="1.5" PointX="3" PointY="9" IsExpanded="true" />
+        <EntityTypeShape EntityType="EventDreamerDBModel.Vendor" Width="1.5" PointX="5.25" PointY="8.5" IsExpanded="true" />
+        <AssociationConnector Association="EventDreamerDBModel.FK__DietaryRe__Guest__47DBAE45" ManuallyRouted="false" />
+        <AssociationConnector Association="EventDreamerDBModel.FK__Events__EventTyp__412EB0B6" ManuallyRouted="false" />
+        <AssociationConnector Association="EventDreamerDBModel.FK__Events__UserID__403A8C7D" ManuallyRouted="false" />
+        <AssociationConnector Association="EventDreamerDBModel.FK__Expenses__EventI__5441852A" ManuallyRouted="false" />
+        <AssociationConnector Association="EventDreamerDBModel.FK__Guests__EventId__44FF419A" ManuallyRouted="false" />
+        <AssociationConnector Association="EventDreamerDBModel.FK__Tasks__EventID__4BAC3F29" ManuallyRouted="false" />
+        <AssociationConnector Association="EventDreamerDBModel.FK__Expenses__Vendor__5535A963" ManuallyRouted="false" />
+        <AssociationConnector Association="EventDreamerDBModel.FK__Users__RoleId__3B75D760" ManuallyRouted="false" />
+        <AssociationConnector Association="EventDreamerDBModel.FK__Vendors__Categor__5070F446" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

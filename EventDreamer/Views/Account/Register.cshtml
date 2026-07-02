@@ -1,0 +1,157 @@
+﻿@model EventDreamer.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Registracija";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Registruj se - EventDreamer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Montserrat', sans-serif;
+        }
+        /* Pozadina identična kao na Home stranici */
+        .bg-image {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)), url('/Images/pozadina.png');
+            background-size: cover;
+            background-position: center;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 35px;
+            width: 380px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 14px;
+        }
+
+            .form-group label {
+                display: block;
+                font-weight: 700;
+                font-size: 13px;
+                margin-bottom: 6px;
+                color: #000;
+            }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.6);
+            background: rgba(255, 255, 255, 0.8);
+            box-sizing: border-box;
+            font-size: 13px;
+        }
+
+        .btn-pink {
+            width: 100%;
+            padding: 14px;
+            background: #f3d1e0;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 16px;
+            color: #000;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+            .btn-pink:hover {
+                background: #e0b8cb;
+            }
+
+        .footer-text {
+            margin-top: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+            .footer-text a {
+                color: #000;
+                font-weight: 700;
+                text-decoration: underline;
+            }
+
+        .text-danger {
+            color: #cc0000;
+            font-size: 12px;
+            margin-top: 4px;
+            display: block;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-image">
+        <div class="glass-card">
+            <div class="card-title">Registruj se</div>
+
+            @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group">
+                    <label>Ime</label>
+                    @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @placeholder = "Unesite ime" })
+                    @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>Prezime</label>
+                    @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @placeholder = "Unesite prezime" })
+                    @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Unesite email" })
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>Lozinka</label>
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Unesite lozinku" })
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                </div>
+
+                <button type="submit" class="btn-pink">Registruj se</button>
+
+                <div class="footer-text">
+                    Već imate nalog? <a href="@Url.Action("Login", "Account")">Prijavite se</a>
+                </div>
+            }
+        </div>
+    </div>
+
+</body>
+</html>
