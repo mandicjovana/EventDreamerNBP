@@ -1,0 +1,243 @@
+﻿@model IEnumerable<EventDreamer.Models.User>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Admin Korisnici - EventDreamer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .bg-image {
+            background-image: url('/Images/pozadina.png');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            display: flex;
+            position: relative;
+        }
+
+        .bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.4);
+            backdrop-filter: blur(5px);
+            z-index: 1;
+        }
+
+        .sidebar {
+            position: relative;
+            z-index: 10;
+            width: 260px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255, 255, 255, 0.4);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.05);
+        }
+
+            .sidebar .logo-text {
+                font-size: 22px;
+                font-weight: 800;
+                color: #111;
+                margin-bottom: 40px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex: 1;
+        }
+
+            .sidebar-menu li {
+                margin-bottom: 12px;
+            }
+
+            .sidebar-menu a {
+                display: block;
+                padding: 12px 15px;
+                color: #333;
+                font-weight: 600;
+                text-decoration: none;
+                border-radius: 12px;
+                transition: 0.3s;
+            }
+
+                .sidebar-menu a:hover:not(.active) {
+                    background: rgba(255, 255, 255, 0.8);
+                }
+
+                .sidebar-menu a.active {
+                    background: #e9f5e9;
+                    color: #2a9d8f;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+                }
+
+        .logout-btn {
+            background: #ffccd5;
+            text-align: center;
+            font-weight: 700;
+            padding: 12px 15px;
+            color: #000;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+
+            .logout-btn:hover {
+                background: #ffb3c1;
+            }
+
+        .main-content {
+            position: relative;
+            z-index: 10;
+            flex: 1;
+            padding: 50px;
+            overflow-y: auto;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            color: #111;
+        }
+
+        /* STAKLENE TRAKE (NODE.JS STIL) */
+        .list-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .list-header {
+            display: grid;
+            grid-template-columns: 80px 2fr 2fr 1fr;
+            padding: 0 30px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .user-row {
+            display: grid;
+            grid-template-columns: 80px 2fr 2fr 1fr;
+            align-items: center;
+            background: rgba(255,255,255,0.65);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.9);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            transition: 0.3s;
+        }
+
+            .user-row:hover {
+                background: rgba(255,255,255,0.85);
+                transform: translateY(-2px);
+            }
+
+        .u-id {
+            color: #888;
+            font-weight: 600;
+        }
+
+        .u-name {
+            font-weight: 700;
+            color: #111;
+            font-size: 16px;
+        }
+
+        .u-email {
+            color: #555;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+            .role-badge.admin {
+                background: #fce4ec;
+                color: #d81b60;
+            }
+
+            .role-badge.user {
+                background: #e8f5e9;
+                color: #2e7d32;
+            }
+    </style>
+</head>
+<body>
+    <div class="bg-image">
+        <div class="bg-overlay"></div>
+
+        <div class="sidebar">
+            <div class="logo-text">⚙️ Admin Sistem</div>
+            <ul class="sidebar-menu">
+                <li><a href="@Url.Action("Index", "Admin")">📊 Statistika</a></li>
+                <li><a href="@Url.Action("ManageUsers", "Admin")" class="active">👥 Svi korisnici</a></li>
+                <li><a href="@Url.Action("ManageVendors", "Admin")">🏪 Vendori</a></li>
+            </ul>
+            <a href="@Url.Action("Index", "Home")" class="logout-btn">Odjavi se</a>
+        </div>
+
+        <div class="main-content">
+            <div class="list-container">
+                <div class="page-title">Spisak registrovanih korisnika</div>
+                <div class="list-header">
+                    <div>ID</div>
+                    <div>IME I PREZIME</div>
+                    <div>EMAIL ADRESA</div>
+                    <div style="text-align:right;">ULOGA U SISTEMU</div>
+                </div>
+
+                @if (Model != null)
+                {
+                    foreach (var u in Model)
+                    {
+                        bool isAdmin = (u.RoleId == 1);
+                        <div class="user-row">
+                            <div class="u-id">#@u.Id</div>
+                            <div class="u-name">@u.FirstName @u.LastName</div>
+                            <div class="u-email">@u.Email</div>
+                            <div style="text-align:right;">
+                                <span class="role-badge @(isAdmin ? "admin" : "user")">
+                                    @(isAdmin ? "🛡️ Admin" : "👤 Korisnik")
+                                </span>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</body>
+</html>

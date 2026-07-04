@@ -152,9 +152,9 @@
         <div class="sidebar">
             <div class="logo-text">EventDreamer</div>
             <ul class="sidebar-menu">
-                <li><a href="#" style="background: rgba(255, 255, 255, 0.6);">🏠 Kontrolna tabla</a></li>
-                <li><a href="#">🎉 Moji Događaji</a></li>
-                <li><a href="#">👥 Lista Gostiju</a></li>
+                <li><a href="@Url.Action("Index", "Dashboard")" style="background: rgba(255, 255, 255, 0.6);">🏠 Kontrolna tabla</a></li>
+                <li><a href="@Url.Action("MojiDogadjaji", "Dashboard")">🎉 Moji Događaji</a></li>
+                <li><a href="@Url.Action("Index", "Guests")">👥 Lista Gostiju</a></li>
                 <li><a href="#">💰 Budžet i Troškovi</a></li>
                 <li><a href="#">📸 Pronađi Vendore</a></li>
             </ul>
@@ -170,25 +170,25 @@
                     <div class="card-icon">📅</div>
                     <div class="card-title">Moji Događaji</div>
                     <div class="card-desc">Kreirajte i upravljajte detaljima Vašeg vjenčanja, rođendana ili proslave.</div>
-                    <a href="#" class="btn-action">Upravljaj</a>
+                    <a href="@Url.Action("MojiDogadjaji", "Dashboard")" class="btn-action">Upravljaj</a>
                 </div>
                 <div class="glass-card">
                     <div class="card-icon">👥</div>
                     <div class="card-title">Lista Gostiju</div>
                     <div class="card-desc">Ubacite goste, pratite ko je potvrdio dolazak i rasporedite ih po stolovima.</div>
-                    <a href="#" class="btn-action">Pregledaj</a>
+                    <a href="@Url.Action("Index", "Guests")" class="btn-action">Pregledaj</a>
                 </div>
                 <div class="glass-card">
                     <div class="card-icon">💰</div>
                     <div class="card-title">Budžet i Troškovi</div>
                     <div class="card-desc">Pratite troškove, unosite uplate i koristite kalkulator za preostali budžet.</div>
-                    <a href="#" class="btn-action">Izračunaj</a>
+                    <a href="@Url.Action("Index", "Budget")" class="btn-action">Izračunaj</a>
                 </div>
                 <div class="glass-card">
                     <div class="card-icon">🔍</div>
                     <div class="card-title">Pretraga Vendora</div>
                     <div class="card-desc">Pretražite fotografe, restorane i dekoraciju po lokaciji, kategoriji i cijeni.</div>
-                    <a href="#" class="btn-action">Pretraži</a>
+                    <a href="@Url.Action("Index", "Vendors")" class="btn-action">Pretraži</a>
                 </div>
             </div>
         </div>

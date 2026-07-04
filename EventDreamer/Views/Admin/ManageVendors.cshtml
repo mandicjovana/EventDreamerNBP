@@ -1,0 +1,307 @@
+﻿@model IEnumerable<EventDreamer.Models.Vendor>
+@{
+    Layout = null;
+    var kategorije = ViewBag.Kategorije as IEnumerable<EventDreamer.Models.VendorCategory>;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Admin Vendori - EventDreamer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .bg-image {
+            background-image: url('/Images/pozadina.png');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            display: flex;
+            position: relative;
+        }
+
+        .bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.4);
+            backdrop-filter: blur(5px);
+            z-index: 1;
+        }
+
+        .sidebar {
+            position: relative;
+            z-index: 10;
+            width: 260px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255, 255, 255, 0.4);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.05);
+        }
+
+            .sidebar .logo-text {
+                font-size: 22px;
+                font-weight: 800;
+                color: #111;
+                margin-bottom: 40px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex: 1;
+        }
+
+            .sidebar-menu li {
+                margin-bottom: 12px;
+            }
+
+            .sidebar-menu a {
+                display: block;
+                padding: 12px 15px;
+                color: #333;
+                font-weight: 600;
+                text-decoration: none;
+                border-radius: 12px;
+                transition: 0.3s;
+            }
+
+                .sidebar-menu a:hover:not(.active) {
+                    background: rgba(255, 255, 255, 0.8);
+                }
+
+                .sidebar-menu a.active {
+                    background: #e9f5e9;
+                    color: #2a9d8f;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+                }
+
+        .logout-btn {
+            background: #ffccd5;
+            text-align: center;
+            font-weight: 700;
+            padding: 12px 15px;
+            color: #000;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+
+            .logout-btn:hover {
+                background: #ffb3c1;
+            }
+
+        .main-content {
+            position: relative;
+            z-index: 10;
+            flex: 1;
+            padding: 40px 50px;
+            overflow-y: auto;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-weight: 800;
+            font-size: 22px;
+            color: #111;
+            margin-bottom: 25px;
+        }
+
+        .form-inline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            text-transform: uppercase;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 12px;
+            font-family: 'Montserrat', sans-serif;
+            background: rgba(255,255,255,0.8);
+            box-sizing: border-box;
+            font-weight: 600;
+        }
+
+        .btn-add {
+            padding: 12px 30px;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            height: 43px;
+            transition: 0.3s;
+            grid-column: span 2;
+        }
+
+            .btn-add:hover {
+                background: #333;
+            }
+
+        .glass-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+            .glass-table th, .glass-table td {
+                padding: 15px 20px;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+            }
+
+            .glass-table th {
+                font-weight: 700;
+                color: #555;
+                font-size: 13px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+        .vendor-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn-del {
+            color: #fff;
+            background: #e63946;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+
+            .btn-del:hover {
+                background: #d32f2f;
+            }
+    </style>
+</head>
+<body>
+    <div class="bg-image">
+        <div class="bg-overlay"></div>
+
+        <div class="sidebar">
+            <div class="logo-text">⚙️ Admin Sistem</div>
+            <ul class="sidebar-menu">
+                <li><a href="@Url.Action("Index", "Admin")">📊 Statistika</a></li>
+                <li><a href="@Url.Action("ManageUsers", "Admin")">👥 Svi korisnici</a></li>
+                <li><a href="@Url.Action("ManageVendors", "Admin")" class="active">🏪 Vendori</a></li>
+            </ul>
+            <a href="@Url.Action("Index", "Home")" class="logout-btn">Odjavi se</a>
+        </div>
+
+        <div class="main-content">
+            <div class="glass-panel">
+                <h2>➕ Dodaj Novog Saradnika (Baza)</h2>
+                <form action="@Url.Action("DodajVendora", "Admin")" method="post" enctype="multipart/form-data" class="form-inline">
+                    <div class="form-group">
+                        <label>Naziv Vendora</label>
+                        <input type="text" name="naziv" required placeholder="npr. Bend Matrix" />
+                    </div>
+                    <div class="form-group">
+                        <label>Kategorija</label>
+                        <select name="kategorijaId" required>
+                            @if (kategorije != null)
+                            {
+                                foreach (var kat in kategorije)
+                                {
+                                    <option value="@kat.Id">@kat.CategoryName</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Kontakt</label>
+                        <input type="text" name="kontakt" required placeholder="067-123-456" />
+                    </div>
+                    <div class="form-group">
+                        <label>Osnovna Cijena (€)</label>
+                        <input type="number" name="cijena" step="0.01" required placeholder="0.00" />
+                    </div>
+
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Izaberi sliku sa računara (Opciono)</label>
+                        <input type="file" name="slikaFajl" accept="image/*" style="background: rgba(255,255,255,0.8); padding: 9px;" />
+                    </div>
+
+                    <button type="submit" class="btn-add">Sačuvaj u bazu</button>
+                </form>
+            </div>
+
+            <div class="glass-panel" style="padding: 20px 0;">
+                <h2 style="padding: 0 30px;">📋 Lista Odobrenih Vendora</h2>
+                <table class="glass-table">
+                    <thead>
+                        <tr>
+                            <th style="padding-left: 30px;">Slika</th>
+                            <th>Naziv</th>
+                            <th>Kategorija</th>
+                            <th>Kontakt</th>
+                            <th>Cijena</th>
+                            <th>Akcija</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var v in Model)
+                            {
+                                <tr>
+                                    <td style="padding-left: 30px;"><img src="@v.ImagePath" class="vendor-img" alt="Vendor" /></td>
+                                    <td style="font-weight: 700; font-size: 16px;">@v.Name</td>
+                                    <td><span style="background: #e8f5e9; color: #2e7d32; padding: 5px 10px; border-radius: 8px; font-weight: 700; font-size: 12px;">@(v.VendorCategory != null ? v.VendorCategory.CategoryName : "N/A")</span></td>
+                                    <td style="font-weight: 500;">@v.Contact</td>
+                                    <td style="font-weight: 800; font-size: 16px;">@v.BasePrice €</td>
+                                    <td><a href="@Url.Action("ObrisiVendora", "Admin", new { id = v.Id })" class="btn-del">Obriši</a></td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

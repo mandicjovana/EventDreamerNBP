@@ -1,0 +1,213 @@
+﻿@model IEnumerable<EventDreamer.Models.Guest>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Lista Gostiju - EventDreamer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .bg-image {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.35)), url('/Images/pozadina.png');
+            background-size: cover;
+            background-position: center;
+            min-height: 100%;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+        }
+
+            .sidebar .logo-text {
+                font-size: 22px;
+                font-weight: 700;
+                color: #000;
+                margin-bottom: 40px;
+                text-transform: uppercase;
+            }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .sidebar-menu a {
+                display: block;
+                padding: 12px 15px;
+                color: #000;
+                font-weight: 600;
+                text-decoration: none;
+                border-radius: 10px;
+                transition: 0.3s;
+                margin-bottom: 10px;
+            }
+
+                .sidebar-menu a:hover {
+                    background: rgba(255, 255, 255, 0.6);
+                }
+
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-weight: 700;
+        }
+
+        .glass-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+            .glass-table th, .glass-table td {
+                padding: 15px;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+            }
+
+            .glass-table th {
+                background: rgba(255,255,255,0.4);
+                font-weight: 700;
+            }
+
+        .btn-del {
+            color: #fff;
+            background: #ff4d4d;
+            padding: 6px 12px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .form-inline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) auto;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(0,0,0,0.15);
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            background: rgba(255,255,255,0.7);
+            box-sizing: border-box;
+        }
+
+        .btn-add {
+            padding: 10px 25px;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            height: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-image">
+        <div class="sidebar">
+            <div class="logo-text">EventDreamer</div>
+            <ul class="sidebar-menu">
+                <li><a href="@Url.Action("Index", "Dashboard")">🏠 Kontrolna tabla</a></li>
+                <li><a href="@Url.Action("MojiDogadjaji", "Dashboard")">🎉 Moji Događaji</a></li>
+                <li><a href="#" style="background: rgba(255, 255, 255, 0.6);">👥 Lista Gostiju</a></li>
+                <li><a href="@Url.Action("Index", "Home")" style="background: #ffccd5; margin-top: 50px;">Odjavi se</a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="glass-panel">
+                <h2>👥 Dodaj Novog Gosta</h2>
+                <form action="@Url.Action("DodajGosta", "Guests")" method="post" class="form-inline">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label style="font-size: 13px; font-weight: 600; display:block; margin-bottom:5px;">Ime</label>
+                        <input type="text" name="ime" required placeholder="npr. Ivan" />
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 13px; font-weight: 600; display:block; margin-bottom:5px;">Prezime</label>
+                        <input type="text" name="prezime" required placeholder="npr. Ivić" />
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 13px; font-weight: 600; display:block; margin-bottom:5px;">Status prisustva</label>
+                        <select name="status">
+                            <option value="Potvrđeno">Potvrđeno</option>
+                            <option value="Na čekanju">Na čekanju</option>
+                            <option value="Otkazano">Otkazano</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 13px; font-weight: 600; display:block; margin-bottom:5px;">Broj stola</label>
+                        <input type="number" name="brojStola" required min="1" value="1" />
+                    </div>
+                    <button type="submit" class="btn-add">Dodaj</button>
+                </form>
+            </div>
+
+            <div class="glass-panel">
+                <h2>📋 Prava Evidencija iz SQL Baze</h2>
+                <table class="glass-table">
+                    <thead>
+                        <tr>
+                            <th>Ime i Prezime</th>
+                            <th>Status dolaska (RSVP)</th>
+                            <th>Dodijeljeni sto</th>
+                            <th>Akcija</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var g in Model)
+                        {
+                            <tr>
+                                <td style="font-weight: 600;">@g.FirstName @g.LastName</td>
+                                <td>
+                                    <span style="padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight:700; background: @(g.RSVPStatus == "Potvrđeno" ? "#d4edda" : "#fff3cd"); color: @(g.RSVPStatus == "Potvrđeno" ? "#155724" : "#856404");">
+                                        @g.RSVPStatus
+                                    </span>
+                                </td>
+                                <td>Sto broj @g.TableNumber</td>
+                                <td><a href="@Url.Action("ObrisiGosta", "Guests", new { id = g.Id })" class="btn-del">Ukloni</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

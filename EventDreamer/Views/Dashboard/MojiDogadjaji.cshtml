@@ -1,0 +1,307 @@
+﻿@model IEnumerable<EventDreamer.Models.Event>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Moji Događaji - EventDreamer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Montserrat', sans-serif;
+            background: #f4eade;
+        }
+
+        .bg-image {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url('/Images/pozadina.png');
+            background-size: cover;
+            background-position: center;
+            min-height: 100%;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+        }
+
+            .sidebar .logo-text {
+                font-size: 22px;
+                font-weight: 700;
+                color: #000;
+                margin-bottom: 40px;
+                text-transform: uppercase;
+            }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .sidebar-menu a {
+                display: block;
+                padding: 12px 15px;
+                color: #000;
+                font-weight: 600;
+                text-decoration: none;
+                border-radius: 10px;
+                transition: 0.3s;
+                margin-bottom: 10px;
+            }
+
+                .sidebar-menu a:hover {
+                    background: rgba(255, 255, 255, 0.6);
+                }
+
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-weight: 700;
+            font-size: 24px;
+            color: #111;
+        }
+
+        .form-inline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) auto;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 10px;
+            font-family: 'Montserrat', sans-serif;
+            background: rgba(255,255,255,0.8);
+            box-sizing: border-box;
+            font-weight: 500;
+        }
+
+        .btn-add {
+            padding: 12px 30px;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            height: 43px;
+            transition: 0.3s;
+        }
+
+            .btn-add:hover {
+                background: #333;
+            }
+
+        /* GRID KARTICA ZA DOGAĐAJE */
+        .event-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .event-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+            .event-card:hover {
+                transform: translateY(-5px);
+            }
+
+            .event-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 6px;
+                background: linear-gradient(90deg, #f3d1e0, #e0c3fc);
+            }
+
+        .e-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 15px 0;
+            color: #111;
+        }
+
+        .e-detail {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #444;
+            margin-bottom: 10px;
+        }
+
+        .e-icon {
+            background: #fff;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .e-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-manage {
+            flex: 1;
+            padding: 10px;
+            background: #fdfbfb;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            color: #000;
+            transition: 0.3s;
+        }
+
+            .btn-manage:hover {
+                background: #f3d1e0;
+                border-color: #f3d1e0;
+            }
+
+        .btn-delete {
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ff4d4d;
+            color: #fff;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+            .btn-delete:hover {
+                background: #e60000;
+            }
+    </style>
+</head>
+<body>
+    <div class="bg-image">
+        <div class="sidebar">
+            <div class="logo-text">EventDreamer</div>
+            <ul class="sidebar-menu">
+                <li><a href="@Url.Action("Index", "Dashboard")">🏠 Kontrolna tabla</a></li>
+                <li><a href="#" style="background: rgba(255, 255, 255, 0.6);">🎉 Moji Događaji</a></li>
+                <li><a href="@Url.Action("Index", "Guests")">👥 Lista Gostiju</a></li>
+                <li><a href="@Url.Action("Index", "Budget")">💰 Budžet i Troškovi</a></li>
+                <li><a href="@Url.Action("Index", "Vendors")">📸 Pronađi Vendore</a></li>
+                <li><a href="@Url.Action("Index", "Home")" style="background: #ffccd5; margin-top: 50px;">Odjavi se</a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+
+            <div class="glass-panel">
+                <h2>🎉 Kreiraj Novi Događaj</h2>
+                <form action="@Url.Action("DodajDogadjaj", "Dashboard")" method="post" class="form-inline">
+                    <div class="form-group">
+                        <label style="font-size: 13px; font-weight: 700; display:block; margin-bottom:5px;">Naziv događaja</label>
+                        <input type="text" name="title" required placeholder="npr. Vjenčanje Ane i Ivana" />
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 13px; font-weight: 700; display:block; margin-bottom:5px;">Datum</label>
+                        <input type="date" name="date" required />
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 13px; font-weight: 700; display:block; margin-bottom:5px;">Lokacija</label>
+                        <input type="text" name="location" placeholder="npr. Budva" />
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 13px; font-weight: 700; display:block; margin-bottom:5px;">Ukupan Budžet (€)</label>
+                        <input type="number" name="totalBudget" step="0.01" required placeholder="0.00" />
+                    </div>
+                    <button type="submit" class="btn-add">+ Dodaj</button>
+                </form>
+            </div>
+
+            <div class="event-grid">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var e in Model)
+                    {
+                        <div class="event-card">
+                            <h3 class="e-title">@e.Title</h3>
+
+                            <div class="e-detail">
+                                <span class="e-icon">📅</span>
+                                <span>@(e.Date.HasValue ? e.Date.Value.ToString("dd.MM.yyyy") : "Datum nije određen")</span>
+                            </div>
+
+                            <div class="e-detail">
+                                <span class="e-icon">📍</span>
+                                <span>@(string.IsNullOrEmpty(e.Location) ? "Lokacija na čekanju" : e.Location)</span>
+                            </div>
+
+                            <div class="e-detail">
+                                <span class="e-icon">💰</span>
+                                <span>Budžet: <strong>@e.TotalBudget €</strong></span>
+                            </div>
+
+                            <div class="e-actions">
+                                <a href="@Url.Action("Index", "Dashboard")" class="btn-manage">Upravljaj</a>
+                                <a href="@Url.Action("ObrisiDogadjaj", "Dashboard", new { id = e.Id })" class="btn-delete" title="Obriši događaj">🗑️</a>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: rgba(255,255,255,0.4); border-radius: 20px; font-weight: 600; color: #555;">
+                        Još uvijek niste kreirali nijedan događaj. Ispunite formu iznad da počnete! 🎈
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
