@@ -1,4 +1,4 @@
-﻿@model IEnumerable<EventDreamer.Models.User>
+﻿@model IEnumerable<EventDreamer.Models.Event>
 @{
     Layout = null;
 }
@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin Korisnici - EventDreamer</title>
+    <title>Admin Događaji - EventDreamer</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -161,15 +161,6 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
-        .btn-add {
-            height: 43px;
-            grid-column: span 2;
-        }
-
-        .btn-trigger-form {
-            margin-bottom: 30px;
-        }
-
         .btn-edit {
             background: var(--logo-green);
             color: #222;
@@ -224,47 +215,10 @@
             color: #111;
         }
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            margin-bottom: 30px;
-        }
-
-        .glass-panel h2 {
-            margin-top: 0;
-            font-weight: 800;
-            font-size: 22px;
-            color: #111;
-            margin-bottom: 25px;
-        }
-
         .list-container {
             max-width: 1100px;
             margin: 0 auto;
             width: 100%;
-        }
-
-        .glass-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        .glass-table th, .glass-table td {
-            padding: 15px 20px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .glass-table th {
-            font-weight: 700;
-            color: #555;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         .list-header {
@@ -292,10 +246,6 @@
             transition: 0.3s;
         }
 
-        .user-row {
-            grid-template-columns: 60px 2fr 2fr 1.5fr 80px;
-        }
-
         .list-header.event-header, .event-row {
             grid-template-columns: 2fr 1fr 1fr 1.5fr 100px;
         }
@@ -306,50 +256,52 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
         }
 
-        .u-id {
-            color: #888;
-            font-weight: 600;
-        }
-
-        .u-name {
-            font-weight: 700;
+        .e-title {
+            font-weight: 800;
             color: #111;
             font-size: 16px;
+            margin-bottom: 5px;
         }
 
-        .u-email {
+        .e-user {
+            color: #2a9d8f;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .e-date {
             color: #555;
-            font-weight: 500;
+            font-weight: 600;
             font-size: 14px;
         }
 
-        .role-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+        .e-budget-box {
+            background: #fff;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+            display: inline-block;
+        }
+
+        .e-planned {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             font-weight: 700;
+            margin-bottom: 2px;
         }
 
-        .role-badge.admin {
-            background: var(--logo-pink);
-            color: #222;
-        }
-
-        .role-badge.user {
-            background: var(--logo-green);
-            color: #222;
+        .e-actual {
+            font-size: 15px;
+            font-weight: 800;
         }
 
         .action-btns {
             display: flex;
             gap: 10px;
             justify-content: flex-start;
-        }
-        .mobile-action-row {
-            display: contents;
         }
 
         /* RESPONSIVE */
@@ -447,23 +399,9 @@
                 position: relative;
             }
 
-            .u-id {
-                position: absolute;
-                top: 20px;
-                right: 20px;
-                font-size: 14px;
-            }
-
-            .u-name {
+            .e-title {
                 font-size: 18px;
-                margin-bottom: 5px;
-                width: 80%;
-            }
-
-            .u-email {
-                margin-bottom: 15px;
-                word-break: break-all;
-                font-size: 14px;
+                margin-bottom: 2px;
             }
 
             .mobile-action-row {
@@ -491,9 +429,9 @@
             <div class="logo-text">⚙️ Admin Sistem</div>
             <ul class="sidebar-menu" id="navContainer">
                 <li><a href="@Url.Action("Index", "Admin")">📊 Statistika</a></li>
-                <li><a href="@Url.Action("ManageUsers", "Admin")" class="active">👥 Svi korisnici</a></li>
+                <li><a href="@Url.Action("ManageUsers", "Admin")">👥 Svi korisnici</a></li>
                 <li><a href="@Url.Action("ManageVendors", "Admin")">🏪 Vendori</a></li>
-                <li><a href="@Url.Action("ManageEvents", "Admin")">📅 Svi događaji</a></li>
+                <li><a href="@Url.Action("ManageEvents", "Admin")" class="active">📅 Svi događaji</a></li>
                 <li><a href="@Url.Action("Index", "Home")" class="logout-btn mobile-only" style="display: none;">Odjavi se</a></li>
             </ul>
             <a href="@Url.Action("Index", "Home")" class="logout-btn desktop-only">Odjavi se</a>
@@ -501,7 +439,7 @@
 
         <div class="main-content">
             <div class="list-container">
-                <div class="page-title">Spisak registrovanih korisnika</div>
+                <div class="page-title">Svi kreirani događaji u sistemu</div>
 
                 @if (TempData["Poruka"] != null)
                 {
@@ -516,38 +454,46 @@
                     </div>
                 }
 
-                <div class="list-header">
-                    <div>ID</div>
-                    <div>IME I PREZIME</div>
-                    <div>EMAIL ADRESA</div>
-                    <div>ULOGA</div>
+                <div class="list-header event-header">
+                    <div>NAZIV DOGAĐAJA I KORISNIK</div>
+                    <div>LOKACIJA</div>
+                    <div>DATUM</div>
+                    <div>FINANSIJE</div>
                     <div style="text-align:right;">AKCIJA</div>
                 </div>
 
-                @if (Model != null)
+                @if (Model != null && Model.Any())
                 {
-                    foreach (var u in Model)
+                    foreach (var e in Model)
                     {
-                        bool isAdmin = (u.RoleId == 1);
-                        <div class="user-row">
-                            <div class="u-id">#@u.Id</div>
-                            <div class="u-name">@u.FirstName @u.LastName</div>
-                            <div class="u-email">@u.Email</div>
+                        decimal ukupnoPotroseno = e.Expenses != null ? e.Expenses.Sum(ex => ex.ActualAmount) : 0;
+                        bool prekoraceno = ukupnoPotroseno > e.TotalBudget;
+
+                        <div class="event-row">
+                            <div>
+                                <div class="e-title">@e.Title</div>
+                                <div class="e-user">👤 @(e.User != null ? e.User.FirstName + " " + e.User.LastName : "Nepoznat")</div>
+                            </div>
+                            <div class="e-date">📍 @e.Location</div>
+                            <div class="e-date">📅 @(e.Date.HasValue ? e.Date.Value.ToString("dd.MM.yyyy") : "Nije zakazano")</div>
+
                             <div class="mobile-action-row">
-                                <div>
-                                    <span class="role-badge @(isAdmin ? "admin" : "user")">
-                                        @(isAdmin ? "🛡️ Admin" : "👤 Korisnik")
-                                    </span>
+                                <div class="e-budget-box">
+                                    <div class="e-planned">Budžet: @e.TotalBudget €</div>
+                                    <div class="e-actual" style="color: @(prekoraceno ? "#e63946" : "#2a9d8f");">Trošak: @ukupnoPotroseno €</div>
                                 </div>
                                 <div style="text-align:right;">
-                                    @if (!isAdmin)
-                                    {
-                                        <a href="@Url.Action("ObrisiKorisnika", "Admin", new { id = u.Id })" class="btn-del" onclick="return confirm('Brisanjem korisnika brišete i SVE njegove događaje, troškove i goste. Da li ste sigurni?');">Obriši</a>
-                                    }
+                                    <a href="@Url.Action("ObrisiDogadjaj", "Admin", new { id = e.Id })" class="btn-del" onclick="return confirm('Da li ste sigurni da želite obrisati ovaj događaj i sve njegove goste i troškove?');">Obriši</a>
                                 </div>
                             </div>
                         </div>
                     }
+                }
+                else
+                {
+                    <div style="text-align: center; padding: 30px; background: rgba(255,255,255,0.6); border-radius: 15px; font-weight: 600;">
+                        Trenutno nema kreiranih događaja.
+                    </div>
                 }
             </div>
         </div>

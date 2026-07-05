@@ -28,25 +28,30 @@ namespace EventDreamer.Controllers
 
             int userId = (int)Session["UserID"];
 
-            // Izvlačimo samo događaje trenutno ulogovanog korisnika
             var mojiDogadjaji = db.Events.Where(e => e.UserID == userId).ToList();
 
-            // OVDJE POZIVAMO TVOJU SQL FUNKCIJU IZ BAZE: BrojPotvrdjenihGostiju
             var potvrdjeniGostiPoDogadjaju = new Dictionary<int, int>();
             foreach (var e in mojiDogadjaji)
             {
-                // Izvršavamo funkciju nad svakim pojedinačnim ID-jem događaja
                 int brojGostiju = db.Database.SqlQuery<int>("SELECT dbo.BrojPotvrdjenihGostiju({0})", e.Id).FirstOrDefault();
                 potvrdjeniGostiPoDogadjaju.Add(e.Id, brojGostiju);
             }
-
-            // Šaljemo rječnik u View kako bismo ispisali broj gostiju pored svakog događaja
             ViewBag.PotvrdjeniGosti = potvrdjeniGostiPoDogadjaju;
+            //za lokacije
+            int idKategorijeRestorana = 1;
+
+            // Vendori ciji je CategoryID = 1 su u bazi restorani/sale
+            var restorani = db.Vendors
+                              .Where(v => v.CategoryID == idKategorijeRestorana)
+                              .Select(v => v.Name)
+                              .ToList();
+
+            ViewBag.ListaLokacija = new SelectList(restorani);
 
             return View(mojiDogadjaji);
         }
 
-        // POST: Dashboard/DodajDogadjaj
+        // POST: za dodavanje dogadjaja na Dashboardu
         [HttpPost]
         public ActionResult DodajDogadjaj(string title, DateTime? date, string location, decimal totalBudget)
         {
@@ -74,7 +79,7 @@ namespace EventDreamer.Controllers
             return RedirectToAction("MojiDogadjaji");
         }
 
-        // GET: Dashboard/ObrisiDogadjaj
+        // za brisanje dogadjaja sa Dashboarda
         public ActionResult ObrisiDogadjaj(int id)
         {
             var dogadjaj = db.Events.Find(id);

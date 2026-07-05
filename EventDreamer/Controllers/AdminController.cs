@@ -10,16 +10,14 @@ namespace EventDreamer.Controllers
     public class AdminController : Controller
     {
         private EventDreamerDBEntities db = new EventDreamerDBEntities();
-
-        // 1. KONTROLNA TABLA / STATISTIKA
         public ActionResult Index()
         {
-            // Osnovna statistika za prve dvije kartice
+            if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
+
             ViewBag.UkupnoKorisnika = db.Users.Count();
             ViewBag.UkupnoDogadjaja = db.Events.Count();
 
-            // Brojanje po kategorijama vendora (pretpostavljamo da su ID-jevi u bazi od 1 do 5)
-            // Ako su ID-jevi drugačiji u tvojoj bazi, samo ih prilagodi
+            // brojanje vendora po kategorijama vendora
             ViewBag.BrojRestorana = db.Vendors.Count(v => v.CategoryID == 1);
             ViewBag.BrojFotografa = db.Vendors.Count(v => v.CategoryID == 2);
             ViewBag.BrojMuzike = db.Vendors.Count(v => v.CategoryID == 3);
@@ -29,64 +27,117 @@ namespace EventDreamer.Controllers
             return View();
         }
 
-        // 2. UPRAVLJANJE KORISNICIMA
+        // za upravljanje korisnicima
         public ActionResult ManageUsers()
         {
+            if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
+
             var korisnici = db.Users.ToList();
             return View(korisnici);
         }
-
-        // 3. UPRAVLJANJE VENDORIMA (Prikaz tabele i forme)
-        public ActionResult ManageVendors()
+        public ActionResult ObrisiKorisnika(int id)
         {
-            // Šaljemo sve kategorije u ViewBag da bi ih Dropdown u formi mogao izlistati
-            ViewBag.Kategorije = db.VendorCategories.ToList();
+            if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
 
-            var vendori = db.Vendors.ToList();
-            return View(vendori);
+            var korisnik = db.Users.Find(id);
+            if (korisnik != null)
+            {
+                // da ne mozemo da obrisemo admina
+                if (korisnik.RoleId == 1)
+                {
+                    TempData["Greska"] = "Ne možete obrisati administratorski nalog!";
+                    return RedirectToAction("ManageUsers");
+                }
+
+                try
+                {
+                    // prvo brisemo sve podatke vezane za korisnika
+                    var dogadjajiKorisnika = db.Events.Where(e => e.UserID == id).ToList();
+                    foreach (var dogadjaj in dogadjajiKorisnika)
+                    {
+                        db.Guests.RemoveRange(db.Guests.Where(g => g.EventId == dogadjaj.Id));
+                        db.Tasks.RemoveRange(db.Tasks.Where(t => t.EventID == dogadjaj.Id));
+                        db.Expenses.RemoveRange(db.Expenses.Where(ex => ex.EventID == dogadjaj.Id));
+                    }
+                    // onda i same dogadjaje
+                    db.Events.RemoveRange(dogadjajiKorisnika);
+
+                    // i na kraju korisnika
+                    db.Users.Remove(korisnik);
+                    db.SaveChanges();
+
+                    TempData["Poruka"] = $"Korisnik {korisnik.FirstName} {korisnik.LastName} i svi njegovi podaci su uspješno obrisani.";
+                }
+                catch (Exception)
+                {
+                    TempData["Greska"] = "Došlo je do greške u bazi prilikom brisanja korisnika.";
+                }
+            }
+            return RedirectToAction("ManageUsers");
+        }
+        // Upravljanje vendorima
+        public ActionResult ManageVendors(int? filterKategorijaId)
+        {
+            if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
+
+            ViewBag.Kategorije = db.VendorCategories.ToList();
+            var vendoriUpit = db.Vendors.AsQueryable();
+
+            // za filter
+            if (filterKategorijaId.HasValue && filterKategorijaId.Value > 0)
+            {
+                vendoriUpit = vendoriUpit.Where(v => v.CategoryID == filterKategorijaId.Value);
+
+                // trazimo na osnovu filtera
+                ViewBag.IsFiltered = true;
+                var kat = db.VendorCategories.Find(filterKategorijaId.Value);
+                ViewBag.NazivKategorije = kat != null ? kat.CategoryName : "Filtrirano";
+            }
+            else
+            {
+                // ako filter nije postavljen, prikazujemo sve vendore
+                ViewBag.IsFiltered = false;
+            }
+
+            return View(vendoriUpit.ToList());
         }
 
         // POST: Dodavanje vendora sa uploadom slike sa kompjutera
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult DodajVendora(string naziv, int kategorijaId, string kontakt, decimal cijena, HttpPostedFileBase slikaFajl)
         {
             if (!string.IsNullOrEmpty(naziv))
             {
-                // Podrazumijevana slika sa interneta u slučaju da korisnik ne izabere ništa
-                string slikaUrl = "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=600&auto=format&fit=crop";
+                // ako nema slike nista, ostaje prazan string u bazi
+                string slikaUrl = "";
 
-                // Provjera da li je fajl stvarno poslat sa računara
+                // provjera da li je fajl stvarno poslat sa računara
                 if (slikaFajl != null && slikaFajl.ContentLength > 0)
                 {
-                    // Putanja do foldera unutar tvog projekta
                     string folderPath = Server.MapPath("~/Images/Vendors/");
 
-                    // Ako folder slučajno ne postoji, sistem ga sam pravi
                     if (!Directory.Exists(folderPath))
                     {
                         Directory.CreateDirectory(folderPath);
                     }
 
-                    // Uzimamo ekstenziju (.jpg, .png...) i generišemo jedinstveno nasumično ime
                     string extension = Path.GetExtension(slikaFajl.FileName);
                     string jedinstvenoIme = Guid.NewGuid().ToString().Substring(0, 8) + extension;
 
-                    // Spajamo putanju i snimamo fajl na tvoj hard disk u sklopu projekta
                     string punaPutanja = Path.Combine(folderPath, jedinstvenoIme);
                     slikaFajl.SaveAs(punaPutanja);
 
-                    // Relativna putanja koju upisujemo u bazu (kako bi HTML mogao da je prikaže preko /Images/...)
                     slikaUrl = "/Images/Vendors/" + jedinstvenoIme;
                 }
 
-                // Kreiranje objekta i čuvanje u bazu podataka
                 var noviVendor = new Vendor
                 {
                     Name = naziv,
                     CategoryID = kategorijaId,
                     Contact = kontakt,
                     BasePrice = cijena,
-                    ImagePath = slikaUrl
+                    ImagePath = slikaUrl 
                 };
 
                 db.Vendors.Add(noviVendor);
@@ -95,8 +146,48 @@ namespace EventDreamer.Controllers
 
             return RedirectToAction("ManageVendors");
         }
+        // 🚀 NOVO: POST Akcija za izmjenu postojećeg vendora
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AzurirajVendora(int id, string naziv, int kategorijaId, string kontakt, decimal cijena, HttpPostedFileBase slikaFajlUredi)
+        {
+            var vendor = db.Vendors.Find(id);
 
-        // Brisanje vendora iz sistema
+            if (vendor != null && !string.IsNullOrEmpty(naziv))
+            {
+                vendor.Name = naziv;
+                vendor.CategoryID = kategorijaId;
+                vendor.Contact = kontakt;
+                vendor.BasePrice = cijena;
+
+                // promjena nove slike
+                if (slikaFajlUredi != null && slikaFajlUredi.ContentLength > 0)
+                {
+                    string folderPath = Server.MapPath("~/Images/Vendors/");
+
+                    if (!Directory.Exists(folderPath))
+                    {
+                        Directory.CreateDirectory(folderPath);
+                    }
+
+                    string extension = Path.GetExtension(slikaFajlUredi.FileName);
+                    string jedinstvenoIme = Guid.NewGuid().ToString().Substring(0, 8) + extension;
+
+                    string punaPutanja = Path.Combine(folderPath, jedinstvenoIme);
+                    slikaFajlUredi.SaveAs(punaPutanja);
+
+                    // nova putanja, stara se brise
+                    vendor.ImagePath = "/Images/Vendors/" + jedinstvenoIme;
+                }
+                // ako ne izmijenimo sliku, ostaje stara
+
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("ManageVendors");
+        }
+
+        // brisanje vendora iz baze
         public ActionResult ObrisiVendora(int id)
         {
             var vendor = db.Vendors.Find(id);
@@ -108,24 +199,45 @@ namespace EventDreamer.Controllers
             return RedirectToAction("ManageVendors");
         }
 
-        // 4. FINANSIJSKI IZVJEŠTAJI / REPORTS
-        // 4. FINANSIJSKI IZVJEŠTAJI / REPORTS
-        public ActionResult Reports()
+        // svi dogadjaji
+        public ActionResult ManageEvents()
         {
-            // Prenosimo osnovne podatke
-            ViewBag.UkupnoKorisnika = db.Users.Count();
-            ViewBag.UkupnoDogadjaja = db.Events.Count();
+            if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
 
-            // Ispravka za Goste: Brojimo koliko ukupno redova ima u cijeloj tabeli Guests u bazi!
-            ViewBag.UkupnoGostiju = db.Guests.Count();
-
-            // Ispravka za Budžet: Sabiramo kolonu 'TotalBudget' koja stvarno postoji u tvom Event.cs!
-            ViewBag.UkupnoTroskova = db.Events.Sum(e => (decimal?)e.TotalBudget) ?? 0;
-
-            return View();
+            // svi događaji iz baze zajedno sa podacima o vlasniku i troškovima
+            var sviDogadjaji = db.Events.Include("User").Include("Expenses").ToList();
+            return View(sviDogadjaji);
         }
 
-        // Oslobađanje resursa baze kada se kontroler ugasi
+        // brisanje događaja i svih njegovih zavisnih podataka
+        public ActionResult ObrisiDogadjaj(int id)
+        {
+            if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
+
+            var dogadjaj = db.Events.Find(id);
+            if (dogadjaj != null)
+            {
+                try
+                {
+                    // prvo brišemo goste, zadatke i troškove vezane za taj događaj
+                    db.Guests.RemoveRange(db.Guests.Where(g => g.EventId == id));
+                    db.Tasks.RemoveRange(db.Tasks.Where(t => t.EventID == id));
+                    db.Expenses.RemoveRange(db.Expenses.Where(ex => ex.EventID == id));
+
+                    // zatim brišemo sam događaj
+                    db.Events.Remove(dogadjaj);
+                    db.SaveChanges();
+
+                    TempData["Poruka"] = $"Događaj '{dogadjaj.Title}' je uspješno obrisan.";
+                }
+                catch (Exception)
+                {
+                    TempData["Greska"] = "Došlo je do greške prilikom brisanja događaja.";
+                }
+            }
+            return RedirectToAction("ManageEvents");
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

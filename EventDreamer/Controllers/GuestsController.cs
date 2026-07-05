@@ -2,60 +2,87 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using EventDreamer.Models; // Provjeri da li je ovaj namespace tačan za tvoje modele
+using EventDreamer.Models;
 
 namespace EventDreamer.Controllers
 {
     public class GuestsController : Controller
     {
-        // Povezujemo se na tvoju pravu SQL bazu podataka
         private EventDreamerDBEntities db = new EventDreamerDBEntities();
 
         // GET: Guests
         public ActionResult Index()
         {
-            // Ako neko pokuša ručno da ode na /Guests bez logina:
             if (Session["UserID"] == null)
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            var sviGosti = db.Guests.ToList();
-            return View(sviGosti);
+            int userId = (int)Session["UserID"];
+
+            //dogadjaji za padajuci meni za ulogovanog korisnika
+            var mojiDogadjaji = db.Events.Where(e => e.UserID == userId).ToList();
+            ViewBag.ListaDogadjaja = new SelectList(mojiDogadjaji, "Id", "Title");
+
+            // samo gosti koji pripadaju tim dogadjajima
+            var mojiDogadjajiIds = mojiDogadjaji.Select(e => e.Id).ToList();
+            var mojiGosti = db.Guests.Where(g => mojiDogadjajiIds.Contains(g.EventId)).ToList();
+
+            return View(mojiGosti);
         }
 
         // POST: Guests/DodajGosta
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DodajGosta(string ime, string prezime, string status, int brojStola)
+        public ActionResult DodajGosta(string ime, string prezime, int EventId)
         {
             if (!string.IsNullOrEmpty(ime) && !string.IsNullOrEmpty(prezime))
             {
-                // Kreiramo objekat tvoje prave klase Guest iz baze
                 var noviGost = new Guest
                 {
                     FirstName = ime,
                     LastName = prezime,
-                    RSVPStatus = status,
-                    TableNumber = brojStola,
-                    EventId = 1 // Privremeno vezujemo za prvi događaj jer je to obavezno polje (strani ključ) u tvojoj bazi
+                    RSVPStatus = "Na čekanju", // po defaultu
+                    TableNumber = null,        // po defaultu
+                    EventId = EventId
                 };
 
-                // Upisujemo u bazu podataka
                 db.Guests.Add(noviGost);
                 db.SaveChanges();
             }
             return RedirectToAction("Index");
         }
 
-        // GET: Guests/ObrisiGosta
-        public ActionResult ObrisiGosta(int id)
+        // POST: Guests/AzurirajStatus
+        [HttpPost]
+        public ActionResult AzurirajStatus(int id, string noviStatus, int? brojStola)
         {
-            // Nalazimo gosta u bazi po njegovom ID-ju
             var gost = db.Guests.Find(id);
             if (gost != null)
             {
-                // Brišemo ga iz baze podataka
+                gost.RSVPStatus = noviStatus;
+
+                //ako potvrdi i posalje broj stola, upisujemo ga u bazu
+                if (noviStatus == "Potvrđeno" && brojStola.HasValue)
+                {
+                    gost.TableNumber = brojStola.Value;
+                }
+                // ako je otkazano ili na cekanju nema broja stola
+                else
+                {
+                    gost.TableNumber = null;
+                }
+
+                db.SaveChanges();
+            }
+            return RedirectToAction("Index");
+        }
+        // GET: Guests/ObrisiGosta
+        public ActionResult ObrisiGosta(int id)
+        {
+            var gost = db.Guests.Find(id);
+            if (gost != null)
+            {
                 db.Guests.Remove(gost);
                 db.SaveChanges();
             }

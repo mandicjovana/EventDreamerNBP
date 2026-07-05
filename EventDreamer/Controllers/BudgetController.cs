@@ -11,67 +11,82 @@ namespace EventDreamer.Controllers
         private EventDreamerDBEntities db = new EventDreamerDBEntities();
 
         // GET: Budget
-        public ActionResult Index()
+        public ActionResult Index(int? eventId)
         {
             if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
 
-            // Za potrebe analize, uzećemo prvi događaj u bazi
-            // (U realnom sistemu ovdje bi prosljeđivala ID selektovanog događaja)
-            var prviDogadjaj = db.Events.FirstOrDefault();
+            int userId = (int)Session["UserID"];
 
-            if (prviDogadjaj != null)
+            // dogadjaji ulogovanog korisnika
+            var mojiDogadjaji = db.Events.Where(e => e.UserID == userId).ToList();
+
+            if (!mojiDogadjaji.Any())
             {
-                // POZIV TVOJE STORED PROCEDURE IZ BAZE: AnalizaTroskovaDogadjaja
-                // Pokrećemo proceduru i mapiramo rezultat na našu pomoćnu klasu TrosakAnalizaRow
-                var analiza = db.Database.SqlQuery<TrosakAnalizaRow>(
-                    "EXEC AnalizaTroskovaDogadjaja @p_EventID = {0}", prviDogadjaj.Id
-                ).FirstOrDefault();
+                ViewBag.NemaDogadjaja = true;
+                return View(new List<Expens>()); // prazno ako nema dogadjaja
+            }
 
-                if (analiza != null)
-                {
-                    ViewBag.NazivDogadjaja = analiza.Title;
-                    ViewBag.Ukupno = analiza.TotalBudget;
-                    ViewBag.Potroseno = analiza.UkupnoPotroseno;
-                    ViewBag.Preostalo = analiza.PreostaliBudzet;
-                }
+            //koji dogadjaj posmatramo iz padajuceg menija
+            // ako je korisnik izabrao iz menija, uzimamo taj. Inače uzimamo njegov prvi.
+            int odabraniDogadjajId = eventId ?? mojiDogadjaji.First().Id;
+
+            // posaljemo padajuci meni u View
+            ViewBag.EventId = new SelectList(mojiDogadjaji, "Id", "Title", odabraniDogadjajId);
+            ViewBag.TrenutniDogadjajId = odabraniDogadjajId;
+
+            // stored procedura iz baze za analizu troskova
+            var analiza = db.Database.SqlQuery<TrosakAnalizaRow>(
+                "EXEC AnalizaTroskovaDogadjaja @p_EventID = {0}", odabraniDogadjajId
+            ).FirstOrDefault();
+
+            if (analiza != null)
+            {
+                ViewBag.NazivDogadjaja = analiza.Title;
+                ViewBag.Ukupno = analiza.TotalBudget;
+                ViewBag.Potroseno = analiza.UkupnoPotroseno;
+                ViewBag.Preostalo = analiza.PreostaliBudzet;
             }
             else
             {
-                ViewBag.Ukupno = 0;
+                // u slucaju da procedura vrati prazno
+                var samDogadjaj = mojiDogadjaji.First(e => e.Id == odabraniDogadjajId);
+                ViewBag.NazivDogadjaja = samDogadjaj.Title;
+                ViewBag.Ukupno = samDogadjaj.TotalBudget;
                 ViewBag.Potroseno = 0;
-                ViewBag.Preostalo = 0;
+                ViewBag.Preostalo = samDogadjaj.TotalBudget;
             }
 
-            var sviTroskovi = db.Expenses.ToList();
-            return View(sviTroskovi);
+            // vratimo troskove
+            var troskoviDogadjaja = db.Expenses.Where(t => t.EventID == odabraniDogadjajId).ToList();
+
+            return View(troskoviDogadjaja);
         }
 
         // POST: Budget/DodajTrosak
         [HttpPost]
-        public ActionResult DodajTrosak(string naziv, decimal planirano, decimal stvarno, string placeno)
+        public ActionResult DodajTrosak(string naziv, decimal planirano, decimal stvarno, string placeno, int EventId)
         {
             if (!string.IsNullOrEmpty(naziv))
             {
-                var prviDogadjaj = db.Events.FirstOrDefault();
-                int dogadjajId = prviDogadjaj != null ? prviDogadjaj.Id : 1;
-
-                var noviTrosak = new Expens
+                var noviTrosak = new Expens // novi trosak
                 {
                     ExpenseName = naziv,
                     PlannedAmount = planirano,
                     ActualAmount = stvarno,
                     IsPaid = (placeno == "Da"),
-                    EventID = dogadjajId
+                    EventID = EventId // trosak vezujemo za odredjeni dogadjaj
                 };
 
                 db.Expenses.Add(noviTrosak);
                 db.SaveChanges();
             }
-            return RedirectToAction("Index");
+
+            // vratimo na Index ali smo idalje na istom dogadjaju
+            return RedirectToAction("Index", new { eventId = EventId });
         }
 
         // GET: Budget/ObrisiTrosak
-        public ActionResult ObrisiTrosak(int id)
+        public ActionResult ObrisiTrosak(int id, int eventId)
         {
             var trosak = db.Expenses.Find(id);
             if (trosak != null)
@@ -79,7 +94,7 @@ namespace EventDreamer.Controllers
                 db.Expenses.Remove(trosak);
                 db.SaveChanges();
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { eventId = eventId });
         }
 
         protected override void Dispose(bool disposing)
@@ -89,7 +104,7 @@ namespace EventDreamer.Controllers
         }
     }
 
-    // POMOĆNA KLASA: Mora imati identične nazive i tipove kolona kao SELECT u tvojoj SQL proceduri!
+    // Za proceduru pomocna klasa
     public class TrosakAnalizaRow
     {
         public string Title { get; set; }

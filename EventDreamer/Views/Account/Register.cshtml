@@ -170,7 +170,7 @@
             <h2>Registruj se</h2>
 
             <form action="@Url.Action("Register", "Account")" method="post">
-                <div class="input-group">
+                @Html.AntiForgeryToken() <div class="input-group">
                     <label>Ime</label>
                     <input type="text" name="FirstName" required placeholder="Unesite ime" />
                 </div>

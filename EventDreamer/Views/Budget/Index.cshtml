@@ -6,42 +6,66 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Budžet i Troškovi - EventDreamer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Budžet i troškovi - EventDreamer</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body, html {
             margin: 0;
             padding: 0;
-            height: 100%;
+            min-height: 100%;
             font-family: 'Montserrat', sans-serif;
             background: #f4eade;
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100vw;
         }
 
         .bg-image {
             background-image: linear-gradient(rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.35)), url('/Images/pozadina.png');
             background-size: cover;
             background-position: center;
-            min-height: 100%;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
             display: flex;
+            width: 100%;
         }
 
         .sidebar {
             width: 260px;
             background: rgba(255, 255, 255, 0.5);
             backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border-right: 1px solid rgba(255, 255, 255, 0.3);
             display: flex;
             flex-direction: column;
             padding: 30px 20px;
+            flex-shrink: 0;
         }
 
-            .sidebar .logo-text {
-                font-size: 22px;
-                font-weight: 700;
-                color: #000;
-                margin-bottom: 40px;
-                text-transform: uppercase;
-            }
+        .mobile-header {
+            display: none;
+        }
+
+        .sidebar .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .sidebar-nav-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
 
         .sidebar-menu {
             list-style: none;
@@ -49,25 +73,26 @@
             margin: 0;
         }
 
-            .sidebar-menu a {
-                display: block;
-                padding: 12px 15px;
-                color: #000;
-                font-weight: 600;
-                text-decoration: none;
-                border-radius: 10px;
-                transition: 0.3s;
-                margin-bottom: 10px;
-            }
+        .sidebar-menu a {
+            display: block;
+            padding: 12px 15px;
+            color: #000;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: 0.3s;
+            margin-bottom: 10px;
+        }
 
-                .sidebar-menu a:hover {
-                    background: rgba(255, 255, 255, 0.6);
-                }
+        .sidebar-menu a:hover {
+            background: rgba(255, 255, 255, 0.6);
+        }
 
         .main-content {
             flex: 1;
             padding: 40px;
             overflow-y: auto;
+            width: 100%;
         }
 
         .glass-panel {
@@ -78,10 +103,11 @@
             padding: 30px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
             margin-bottom: 30px;
+            width: 100%;
         }
 
         .event-info-panel {
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.6);
             border-radius: 12px;
             padding: 15px 20px;
             margin-bottom: 25px;
@@ -90,8 +116,10 @@
             color: #222;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
             border-left: 5px solid #2a9d8f;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            flex-wrap: wrap;
         }
 
         h2 {
@@ -99,9 +127,10 @@
             font-weight: 700;
         }
 
+        /* css za statistiku */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -116,25 +145,25 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.02);
         }
 
-            .stat-card span {
-                display: block;
-                font-size: 26px;
-                font-family: 'Arial Black', sans-serif;
-                margin-top: 10px;
-                color: #222;
-            }
+        .stat-card span {
+            display: block;
+            font-size: 26px;
+            font-family: 'Arial Black', sans-serif;
+            margin-top: 10px;
+            color: #222;
+        }
 
-            .stat-card.total span {
-                color: #000;
-            }
+        .stat-card.total span {
+            color: #000;
+        }
 
-            .stat-card.green span {
-                color: #2a9d8f;
-            }
+        .stat-card.green span {
+            color: #2a9d8f;
+        }
 
-            .stat-card.remaining span {
-                color: #e63946;
-            }
+        .stat-card.remaining span {
+            color: #e63946;
+        }
 
         .glass-table {
             width: 100%;
@@ -142,15 +171,15 @@
             text-align: left;
         }
 
-            .glass-table th, .glass-table td {
-                padding: 15px;
-                border-bottom: 1px solid rgba(0,0,0,0.05);
-            }
+        .glass-table th, .glass-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
 
-            .glass-table th {
-                background: rgba(255,255,255,0.4);
-                font-weight: 700;
-            }
+        .glass-table th {
+            background: rgba(255,255,255,0.4);
+            font-weight: 700;
+        }
 
         .btn-del {
             color: #fff;
@@ -160,18 +189,24 @@
             border-radius: 6px;
             font-weight: 600;
             font-size: 13px;
+            display: inline-block;
             transition: 0.2s;
         }
 
-            .btn-del:hover {
-                background: #cc0000;
-            }
+        .btn-del:hover {
+            background: #cc0000;
+        }
 
         .form-inline {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) auto;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             gap: 15px;
             align-items: end;
+        }
+
+        .form-inline .btn-container {
+            display: flex;
+            align-items: flex-end;
         }
 
         .form-group input, .form-group select {
@@ -182,6 +217,7 @@
             font-family: 'Montserrat', sans-serif;
             background: rgba(255,255,255,0.7);
             box-sizing: border-box;
+            cursor: pointer;
         }
 
         .btn-add {
@@ -193,110 +229,272 @@
             font-weight: 700;
             cursor: pointer;
             height: 40px;
+            width: 100%;
             transition: 0.2s;
         }
 
-            .btn-add:hover {
-                background: #222;
+        .btn-add:hover {
+            background: #222;
+        }
+
+        /* Responsive design*/
+        @@media screen and (max-width: 768px) {
+            .bg-image {
+                flex-direction: column;
             }
+
+            .sidebar {
+                width: 100% !important;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+                padding: 15px 20px;
+            }
+
+            .sidebar .logo-text {
+                display: none;
+            }
+
+            .mobile-header {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                width: 100%;
+                gap: 15px;
+            }
+
+            .mobile-header .logo-text-mobile {
+                font-size: 20px;
+                font-weight: 700;
+                color: #000;
+                text-transform: uppercase;
+                margin: 0;
+            }
+
+            .hamburger-btn {
+                background: none;
+                border: none;
+                font-size: 28px;
+                cursor: pointer;
+                color: #000;
+                padding: 0;
+                display: flex;
+                align-items: center;
+            }
+
+            .sidebar-nav-container {
+                display: none;
+                width: 100%;
+                margin-top: 20px;
+                flex-direction: column;
+            }
+
+            .sidebar-nav-container.active {
+                display: flex;
+            }
+
+            .sidebar-menu a {
+                padding: 12px;
+                text-align: center;
+                font-size: 15px;
+                background: rgba(255, 255, 255, 0.4);
+            }
+
+            .main-content {
+                padding: 20px 15px;
+            }
+
+            .glass-panel {
+                padding: 20px;
+            }
+
+            .form-inline {
+                grid-template-columns: 1fr;
+            }
+            /* pretvaranje tabele u kartice */
+            .glass-table, .glass-table tbody, .glass-table tr, .glass-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .glass-table thead {
+                display: none;
+            }
+
+            .glass-table tr {
+                background: rgba(255, 255, 255, 0.6);
+                margin-bottom: 15px;
+                border-radius: 12px;
+                border: 1px solid rgba(0,0,0,0.1);
+                padding: 10px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            }
+
+            .glass-table td {
+                text-align: right;
+                padding: 12px 10px 12px 45%;
+                border-bottom: 1px dotted rgba(0,0,0,0.1);
+                position: relative;
+                min-height: 45px;
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                word-break: break-word;
+            }
+
+            .glass-table td:last-child {
+                border-bottom: none;
+                justify-content: center;
+            }
+
+            .glass-table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 40%;
+                padding-right: 10px;
+                white-space: normal;
+                text-align: left;
+                font-weight: 700;
+                color: #555;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="bg-image">
         <div class="sidebar">
+            <div class="mobile-header">
+                <button class="hamburger-btn" id="hamburgerToggle">☰</button>
+                <h2 class="logo-text-mobile">EventDreamer</h2>
+            </div>
             <div class="logo-text">EventDreamer</div>
-            <ul class="sidebar-menu">
-                <li><a href="@Url.Action("Index", "Dashboard")">🏠 Kontrolna tabla</a></li>
-                <li><a href="@Url.Action("MojiDogadjaji", "Dashboard")">🎉 Moji Događaji</a></li>
-                <li><a href="@Url.Action("Index", "Guests")">👥 Lista Gostiju</a></li>
-                <li><a href="#" style="background: rgba(255, 255, 255, 0.6);">💰 Budžet i Troškovi</a></li>
-                <li><a href="@Url.Action("Index", "Vendors")">📸 Pronađi Vendore</a></li>
-                <li><a href="@Url.Action("Index", "Home")" style="background: #ffccd5; margin-top: 50px;">Odjavi se</a></li>
-            </ul>
+            <div class="sidebar-nav-container" id="navContainer">
+                <ul class="sidebar-menu">
+                    <li><a href="@Url.Action("Index", "Dashboard")">🏠 Kontrolna tabla</a></li>
+                    <li><a href="@Url.Action("MojiDogadjaji", "Dashboard")">🎉 Moji događaji</a></li>
+                    <li><a href="@Url.Action("Index", "Guests")">👥 Lista gostiju</a></li>
+                    <li><a href="#" style="background: rgba(255, 255, 255, 0.6);">💰 Budžet i troškovi</a></li>
+                    <li><a href="@Url.Action("Index", "Vendors")">📸 Pronađi vendore</a></li>
+                    <li><a href="@Url.Action("Logout", "Account")" style="background: #ffccd5; margin-top: 30px;">Odjavi se</a></li>
+                </ul>
+            </div>
         </div>
+
         <div class="main-content">
 
-            @if (ViewBag.NazivDogadjaja != null)
+            @if (ViewBag.NemaDogadjaja != null && ViewBag.NemaDogadjaja == true)
             {
-                <div class="event-info-panel">
-                    📊 Aktivni pregled za događaj: <span style="color: #000;">@ViewBag.NazivDogadjaja</span>
+                <div class="glass-panel" style="text-align: center; padding: 50px 20px;">
+                    <h2 style="color: #555;">Nema kreiranih događaja!</h2>
+                    <p style="font-weight: 500;">Da biste upravljali budžetom, prvo morate kreirati makar jedan događaj.</p>
+                    <a href="@Url.Action("MojiDogadjaji", "Dashboard")" class="btn-add" style="display: inline-block; text-decoration: none; margin-top: 20px; line-height: 20px;">Kreiraj događaj</a>
                 </div>
             }
+            else
+            {
+                <div class="event-info-panel">
+                    <form action="@Url.Action("Index", "Budget")" method="get" style="margin: 0; width: 100%; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                        <label style="margin: 0; display: flex; align-items: center; gap: 10px;">
+                            📊 Aktivni pregled za:
+                        </label>
+                        @Html.DropDownList("eventId", (SelectList)ViewBag.EventId, new { onchange = "this.form.submit()", @style = "padding: 8px 15px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.2); font-family: 'Montserrat', sans-serif; font-weight: 700; cursor: pointer; flex: 1; min-width: 200px; background: #fff;" })
+                    </form>
+                </div>
 
-            <div class="stats-grid">
-                <div class="stat-card total">Predviđeni Budžet <span>@ViewBag.Ukupno €</span></div>
-                <div class="stat-card green">Ukupno Potrošeno <span>@ViewBag.Potroseno €</span></div>
-                <div class="stat-card remaining">Preostali Budžet <span>@ViewBag.Preostalo €</span></div>
-            </div>
+                <div class="stats-grid">
+                    <div class="stat-card total">Predviđeni budžet <span>@ViewBag.Ukupno €</span></div>
+                    <div class="stat-card green">Ukupno potrošeno <span>@ViewBag.Potroseno €</span></div>
+                    <div class="stat-card remaining">Preostali budžet <span>@ViewBag.Preostalo €</span></div>
+                </div>
 
-            <div class="glass-panel">
-                <h2>💰 Evidentiraj Trošak (SQL Baza)</h2>
-                <form action="@Url.Action("DodajTrosak", "Budget")" method="post" class="form-inline">
-                    <div class="form-group">
-                        <label style="font-size: 13px; font-weight: 600; display:block; margin-bottom:5px;">Naziv izdatka</label>
-                        <input type="text" name="naziv" required placeholder="npr. Bend" />
-                    </div>
-                    <div class="form-group">
-                        <label style="font-size: 13px; font-weight: 600; display:block; margin-bottom:5px;">Planirano (€)</label>
-                        <input type="number" name="planirano" step="0.01" required placeholder="0.00" />
-                    </div>
-                    <div class="form-group">
-                        <label style="font-size: 13px; font-weight: 600; display:block; margin-bottom:5px;">Stvarno (€)</label>
-                        <input type="number" name="stvarno" step="0.01" required placeholder="0.00" />
-                    </div>
-                    <div class="form-group">
-                        <label style="font-size: 13px; font-weight: 600; display:block; margin-bottom:5px;">Plaćeno?</label>
-                        <select name="placeno">
-                            <option value="Ne">Ne</option>
-                            <option value="Da">Da</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn-add">Upiši</button>
-                </form>
-            </div>
+                <div class="glass-panel">
+                    <h2>💰 Evidentiraj trošak </h2>
+                    <form action="@Url.Action("DodajTrosak", "Budget")" method="post" class="form-inline">
+                        <input type="hidden" name="EventId" value="@ViewBag.TrenutniDogadjajId" />
 
-            <div class="glass-panel">
-                <h2>📋 Detaljna Lista</h2>
-                <table class="glass-table">
-                    <thead>
-                        <tr>
-                            <th>Naziv stavke</th>
-                            <th>Planirani Iznos</th>
-                            <th>Stvarni Iznos</th>
-                            <th>Status</th>
-                            <th>Akcija</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model != null && Model.Any())
-                        {
-                            foreach (var t in Model)
+                        <div class="form-group">
+                            <label style="font-size: 13px; font-weight: 600; display:block; margin-bottom:5px;">Naziv vendora</label>
+                            <input type="text" name="naziv" required placeholder="npr. Bend" />
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size: 13px; font-weight: 600; display:block; margin-bottom:5px;">Planirano (€)</label>
+                            <input type="number" name="planirano" step="0.01" required placeholder="0.00" />
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size: 13px; font-weight: 600; display:block; margin-bottom:5px;">Stvarno (€)</label>
+                            <input type="number" name="stvarno" step="0.01" required placeholder="0.00" />
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size: 13px; font-weight: 600; display:block; margin-bottom:5px;">Plaćeno?</label>
+                            <select name="placeno">
+                                <option value="Ne">Ne</option>
+                                <option value="Da">Da</option>
+                            </select>
+                        </div>
+                        <div class="form-group btn-container">
+                            <button type="submit" class="btn-add">Upiši</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="glass-panel">
+                    <h2>📋 Detaljna lista</h2>
+                    <table class="glass-table">
+                        <thead>
+                            <tr>
+                                <th>Naziv stavke</th>
+                                <th>Planirani iznos</th>
+                                <th>Stvarni iznos</th>
+                                <th>Status</th>
+                                <th>Akcija</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var t in Model)
+                                {
+                                    <tr>
+                                        <td data-label="Naziv stavke" style="font-weight: 600;">@t.ExpenseName</td>
+                                        <td data-label="Planirani Iznos">@t.PlannedAmount €</td>
+                                        <td data-label="Stvarni Iznos">@t.ActualAmount €</td>
+                                        <td data-label="Status">
+                                            <span style="padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight:700; background: @(t.IsPaid ? "#d4edda" : "#f8d7da"); color: @(t.IsPaid ? "#155724" : "#721c24");">
+                                                @(t.IsPaid ? "Plaćeno" : "Dugovanje")
+                                            </span>
+                                        </td>
+                                        <td data-label="Akcija">
+                                            <a href="@Url.Action("ObrisiTrosak", "Budget", new { id = t.Id, eventId = ViewBag.TrenutniDogadjajId })" class="btn-del">Obriši</a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
                             {
                                 <tr>
-                                    <td style="font-weight: 600;">@t.ExpenseName</td>
-                                    <td>@t.PlannedAmount €</td>
-                                    <td>@t.ActualAmount €</td>
-                                    <td>
-                                        <span style="padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight:700; background: @(t.IsPaid ? "#d4edda" : "#f8d7da"); color: @(t.IsPaid ? "#155724" : "#721c24");">
-                                            @(t.IsPaid ? "Plaćeno" : "Dugovanje")
-                                        </span>
+                                    <td colspan="5" style="text-align: center; padding: 20px; color: #666; font-weight: 500; display: block; width: 100%;">
+                                        Trenutno nema unijetih troškova za ovaj događaj.
                                     </td>
-                                    <td><a href="@Url.Action("ObrisiTrosak", "Budget", new { id = t.Id })" class="btn-del">Obriši</a></td>
                                 </tr>
                             }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="5" style="text-align: center; padding: 20px; color: #666; font-weight: 500;">
-                                    Trenutno nema unijetih troškova za ovaj događaj.
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                        </tbody>
+                    </table>
+                </div>
+            }
         </div>
     </div>
+
+    <script>document.getElementById("hamburgerToggle").addEventListener("click", function() {
+            var nav = document.getElementById("navContainer");
+            nav.classList.toggle("active");
+
+            if (nav.classList.contains("active")) {
+                this.innerHTML = "✕";
+            } else {
+                this.innerHTML = "☰";
+            }
+        });</script>
 </body>
 </html>

@@ -170,7 +170,7 @@
             <h2>Prijavi se</h2>
 
             <form action="@Url.Action("Login", "Account")" method="post">
-                <div class="input-group">
+                @Html.AntiForgeryToken() <div class="input-group">
                     <label>Email</label>
                     <input type="email" name="Email" required placeholder="Unesite email" />
                 </div>

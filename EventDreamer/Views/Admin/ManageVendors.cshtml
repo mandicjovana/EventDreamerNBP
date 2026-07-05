@@ -7,14 +7,25 @@
 <html>
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Admin Vendori - EventDreamer</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --logo-pink: #F6DEEA;
+            --logo-green: #BCC5AA;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
         }
 
         .bg-image {
@@ -32,32 +43,41 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255,255,255,0.4);
+            background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(5px);
             z-index: 1;
         }
 
+        /* SIDEBAR */
         .sidebar {
             position: relative;
             z-index: 10;
             width: 260px;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(15px);
-            border-right: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.6);
             display: flex;
             flex-direction: column;
-            padding: 30px 20px;
-            box-shadow: 4px 0 24px rgba(0,0,0,0.05);
+            padding: 40px 20px;
+            box-shadow: 4px 0 25px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
         }
 
-            .sidebar .logo-text {
-                font-size: 22px;
-                font-weight: 800;
-                color: #111;
-                margin-bottom: 40px;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-            }
+        .mobile-header {
+            display: none;
+        }
+
+        .sidebar .logo-text {
+            font-size: 20px;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-align: center;
+            line-height: 1.4;
+            display: block;
+        }
 
         .sidebar-menu {
             list-style: none;
@@ -66,69 +86,227 @@
             flex: 1;
         }
 
-            .sidebar-menu li {
-                margin-bottom: 12px;
-            }
-
-            .sidebar-menu a {
-                display: block;
-                padding: 12px 15px;
-                color: #333;
-                font-weight: 600;
-                text-decoration: none;
-                border-radius: 12px;
-                transition: 0.3s;
-            }
-
-                .sidebar-menu a:hover:not(.active) {
-                    background: rgba(255, 255, 255, 0.8);
-                }
-
-                .sidebar-menu a.active {
-                    background: #e9f5e9;
-                    color: #2a9d8f;
-                    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-                }
-
-        .logout-btn {
-            background: #ffccd5;
-            text-align: center;
-            font-weight: 700;
-            padding: 12px 15px;
-            color: #000;
-            text-decoration: none;
-            border-radius: 12px;
-            transition: 0.3s;
+        .sidebar-menu li {
+            margin-bottom: 8px;
         }
 
-            .logout-btn:hover {
-                background: #ffb3c1;
-            }
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            color: #444;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
 
+        .sidebar-menu a:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.9);
+            color: #111;
+            transform: translateX(4px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .sidebar-menu a.active {
+            background: #111;
+            color: #fff;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            transform: translateX(4px);
+        }
+
+        /* --- SVA DUGMAD PREMA LOGO BOJAMA --- */
+        .logout-btn {
+            background: var(--logo-pink);
+            color: #222;
+            text-align: center;
+            font-weight: 700;
+            padding: 14px 20px;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            margin-top: auto;
+            display: flex;
+            justify-content: center;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .logout-btn:hover {
+            background: var(--logo-green);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-add, .btn-trigger-form, .btn-submit-modal {
+            background: var(--logo-green);
+            color: #222;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 12px 25px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .btn-add:hover, .btn-trigger-form:hover, .btn-submit-modal:hover {
+            background: var(--logo-pink);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-add {
+            height: 43px;
+            grid-column: span 2;
+        }
+
+        .btn-trigger-form {
+            margin-bottom: 30px;
+        }
+
+        .btn-edit {
+            background: var(--logo-green);
+            color: #222;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit:hover {
+            background: var(--logo-pink);
+            transform: translateY(-2px);
+        }
+
+        .btn-del {
+            background: var(--logo-pink);
+            color: #222;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-del:hover {
+            background: var(--logo-green);
+            transform: translateY(-2px);
+        }
+
+        /* MAIN CONTENT */
         .main-content {
             position: relative;
             z-index: 10;
             flex: 1;
-            padding: 40px 50px;
+            padding: 50px;
             overflow-y: auto;
+            width: 100%;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            color: #111;
         }
 
         .glass-panel {
-            background: rgba(255, 255, 255, 0.65);
+            background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.9);
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
-        h2 {
+        .glass-panel h2 {
             margin-top: 0;
             font-weight: 800;
             font-size: 22px;
             color: #111;
             margin-bottom: 25px;
+        }
+
+        /* MREŽA VENDORA (KARTICE) */
+        .vendor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            width: 100%;
+        }
+
+        .vendor-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 100%;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        .vendor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 180px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            background-size: cover;
+            background-position: center;
+            background-color: #ddd;
+        }
+
+        .v-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .v-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: var(--logo-pink);
+            color: #222;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .v-info {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #444;
         }
 
         .form-inline {
@@ -150,30 +328,56 @@
         .form-group input, .form-group select {
             width: 100%;
             padding: 12px;
-            border: 1px solid rgba(0,0,0,0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
             border-radius: 12px;
             font-family: 'Montserrat', sans-serif;
-            background: rgba(255,255,255,0.8);
+            background: rgba(255, 255, 255, 0.8);
             box-sizing: border-box;
             font-weight: 600;
         }
 
-        .btn-add {
-            padding: 12px 30px;
-            background: #000;
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            height: 43px;
-            transition: 0.3s;
-            grid-column: span 2;
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
         }
 
-            .btn-add:hover {
-                background: #333;
-            }
+        .modal-content {
+            background: #fff;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-weight: bold;
+        }
+
+        .list-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
 
         .glass-table {
             width: 100%;
@@ -181,41 +385,174 @@
             text-align: left;
         }
 
-            .glass-table th, .glass-table td {
-                padding: 15px 20px;
-                border-bottom: 1px solid rgba(0,0,0,0.05);
-            }
+        .glass-table th, .glass-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
 
-            .glass-table th {
-                font-weight: 700;
-                color: #555;
-                font-size: 13px;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-            }
+        .glass-table th {
+            font-weight: 700;
+            color: #555;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
         .vendor-img {
             width: 60px;
             height: 60px;
             border-radius: 12px;
             object-fit: cover;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .btn-del {
-            color: #fff;
-            background: #e63946;
-            padding: 8px 15px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 13px;
-            transition: 0.3s;
+        .action-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
         }
 
-            .btn-del:hover {
-                background: #d32f2f;
+        /* RESPONSIVE */
+        @@media screen and (max-width: 768px) {
+            .bg-image {
+                flex-direction: column;
             }
+
+            .sidebar {
+                width: 100% !important;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+                padding: 15px 20px;
+            }
+
+            .sidebar .logo-text {
+                display: none;
+            }
+
+            .mobile-header {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                width: 100%;
+                gap: 15px;
+            }
+
+            .mobile-header .logo-text-mobile {
+                font-size: 20px;
+                font-weight: 800;
+                color: #111;
+                text-transform: uppercase;
+                margin: 0;
+            }
+
+            .hamburger-btn {
+                background: none;
+                border: none;
+                font-size: 28px;
+                cursor: pointer;
+                color: #111;
+                padding: 0;
+                display: flex;
+                align-items: center;
+            }
+
+            .sidebar-menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 20px;
+            }
+
+            .sidebar-menu.active {
+                display: flex;
+            }
+
+            .sidebar-menu a {
+                justify-content: center;
+                transform: none !important;
+            }
+
+            .sidebar-menu a:hover:not(.active) {
+                transform: none !important;
+            }
+
+            .logout-btn.desktop-only {
+                display: none;
+            }
+
+            .logout-btn.mobile-only {
+                display: flex;
+                margin-top: 10px;
+            }
+
+            .main-content {
+                padding: 30px 15px;
+            }
+
+            .glass-panel {
+                padding: 20px;
+            }
+
+            .btn-trigger-form {
+                width: 100%;
+                text-align: center;
+            }
+
+            .form-inline {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-add {
+                grid-column: span 1 !important;
+                width: 100%;
+            }
+
+            .glass-table, .glass-table tbody, .glass-table tr, .glass-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .glass-table thead {
+                display: none;
+            }
+
+            .glass-table tr {
+                background: rgba(255, 255, 255, 0.8);
+                margin-bottom: 15px;
+                border-radius: 15px;
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                padding: 5px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            }
+
+            .glass-table td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                text-align: right;
+                padding: 12px 15px;
+                border-bottom: 1px dotted rgba(0, 0, 0, 0.1);
+            }
+
+            .glass-table td:last-child {
+                border-bottom: none;
+            }
+
+            .glass-table td::before {
+                content: attr(data-label);
+                font-weight: 800;
+                font-size: 11px;
+                text-transform: uppercase;
+                color: #555;
+                text-align: left;
+                flex-basis: 40%;
+            }
+
+            .action-btns {
+                justify-content: flex-end;
+                width: auto;
+            }
+        }
     </style>
 </head>
 <body>
@@ -223,52 +560,71 @@
         <div class="bg-overlay"></div>
 
         <div class="sidebar">
+            <div class="mobile-header">
+                <button class="hamburger-btn" id="hamburgerToggle">☰</button>
+                <h2 class="logo-text-mobile">⚙️ Admin</h2>
+            </div>
+
             <div class="logo-text">⚙️ Admin Sistem</div>
-            <ul class="sidebar-menu">
+            <ul class="sidebar-menu" id="navContainer">
                 <li><a href="@Url.Action("Index", "Admin")">📊 Statistika</a></li>
                 <li><a href="@Url.Action("ManageUsers", "Admin")">👥 Svi korisnici</a></li>
                 <li><a href="@Url.Action("ManageVendors", "Admin")" class="active">🏪 Vendori</a></li>
+                <li><a href="@Url.Action("ManageEvents", "Admin")">📅 Svi događaji</a></li>
+                <li><a href="@Url.Action("Index", "Home")" class="logout-btn mobile-only" style="display: none;">Odjavi se</a></li>
             </ul>
-            <a href="@Url.Action("Index", "Home")" class="logout-btn">Odjavi se</a>
+            <a href="@Url.Action("Index", "Home")" class="logout-btn desktop-only">Odjavi se</a>
         </div>
 
         <div class="main-content">
-            <div class="glass-panel">
-                <h2>➕ Dodaj Novog Saradnika (Baza)</h2>
-                <form action="@Url.Action("DodajVendora", "Admin")" method="post" enctype="multipart/form-data" class="form-inline">
-                    <div class="form-group">
-                        <label>Naziv Vendora</label>
-                        <input type="text" name="naziv" required placeholder="npr. Bend Matrix" />
-                    </div>
-                    <div class="form-group">
-                        <label>Kategorija</label>
-                        <select name="kategorijaId" required>
-                            @if (kategorije != null)
-                            {
-                                foreach (var kat in kategorije)
+            @if (ViewBag.IsFiltered != null && (bool)ViewBag.IsFiltered)
+            {
+                <div class="glass-panel" style="padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+                    <h2 style="margin: 0; font-size: 18px;">🔎 Prikazujete samo: <span style="color: #2a9d8f;">@ViewBag.NazivKategorije</span></h2>
+                    <a href="@Url.Action("ManageVendors", "Admin")" class="btn-add" style="text-decoration: none; padding: 12px 20px; line-height: normal; height: auto; grid-column: auto; text-align:center;">Prikaži sve</a>
+                </div>
+            }
+            else
+            {
+                <button class="btn-trigger-form" id="btnToggleForm" onclick="toggleForma()">Kreiraj Novog Saradnika</button>
+                <div class="glass-panel" id="panelForma" style="display: none; transition: 0.3s;">
+                    <h2>➕ Unos Novog Saradnika u Bazu</h2>
+                    <form action="@Url.Action("DodajVendora", "Admin")" method="post" enctype="multipart/form-data" class="form-inline">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <label>Naziv Vendora</label>
+                            <input type="text" name="naziv" required placeholder="npr. Bend Matrix" />
+                        </div>
+                        <div class="form-group">
+                            <label>Kategorija</label>
+                            <select name="kategorijaId" required>
+                                @if (kategorije != null)
                                 {
-                                    <option value="@kat.Id">@kat.CategoryName</option>
+                                    foreach (var kat in kategorije)
+                                    {
+                                        <option value="@kat.Id">@kat.CategoryName</option>
+                                    }
                                 }
-                            }
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Kontakt</label>
-                        <input type="text" name="kontakt" required placeholder="067-123-456" />
-                    </div>
-                    <div class="form-group">
-                        <label>Osnovna Cijena (€)</label>
-                        <input type="number" name="cijena" step="0.01" required placeholder="0.00" />
-                    </div>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Kontakt</label>
+                            <input type="text" name="kontakt" required placeholder="067-123-456" />
+                        </div>
+                        <div class="form-group">
+                            <label>Osnovna Cijena (€)</label>
+                            <input type="number" name="cijena" step="0.01" required placeholder="0.00" />
+                        </div>
 
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label>Izaberi sliku sa računara (Opciono)</label>
-                        <input type="file" name="slikaFajl" accept="image/*" style="background: rgba(255,255,255,0.8); padding: 9px;" />
-                    </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label>Izaberi sliku (Opciono)</label>
+                            <input type="file" name="slikaFajl" accept="image/*" style="background: rgba(255,255,255,0.8); padding: 9px;" />
+                        </div>
 
-                    <button type="submit" class="btn-add">Sačuvaj u bazu</button>
-                </form>
-            </div>
+                        <button type="submit" class="btn-add">Sačuvaj u bazu</button>
+                    </form>
+                </div>
+            }
 
             <div class="glass-panel" style="padding: 20px 0;">
                 <h2 style="padding: 0 30px;">📋 Lista Odobrenih Vendora</h2>
@@ -284,17 +640,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (Model != null)
+                        @if (Model != null && Model.Any())
                         {
                             foreach (var v in Model)
                             {
                                 <tr>
-                                    <td style="padding-left: 30px;"><img src="@v.ImagePath" class="vendor-img" alt="Vendor" /></td>
-                                    <td style="font-weight: 700; font-size: 16px;">@v.Name</td>
-                                    <td><span style="background: #e8f5e9; color: #2e7d32; padding: 5px 10px; border-radius: 8px; font-weight: 700; font-size: 12px;">@(v.VendorCategory != null ? v.VendorCategory.CategoryName : "N/A")</span></td>
-                                    <td style="font-weight: 500;">@v.Contact</td>
-                                    <td style="font-weight: 800; font-size: 16px;">@v.BasePrice €</td>
-                                    <td><a href="@Url.Action("ObrisiVendora", "Admin", new { id = v.Id })" class="btn-del">Obriši</a></td>
+                                    <td data-label="Fotografija" style="padding-left: 30px;">
+                                        <img src="@v.ImagePath" class="vendor-img" alt="Vendor" />
+                                    </td>
+                                    <td data-label="Naziv" style="font-weight: 700; font-size: 16px;">@v.Name</td>
+                                    <td data-label="Kategorija">
+                                        <span class="v-badge" style="margin-bottom:0;">@(v.VendorCategory != null ? v.VendorCategory.CategoryName : "N/A")</span>
+                                    </td>
+                                    <td data-label="Kontakt" style="font-weight: 500;">@v.Contact</td>
+                                    <td data-label="Cijena" style="font-weight: 800; font-size: 16px;">@v.BasePrice €</td>
+                                    <td data-label="Akcija">
+                                        <div class="action-btns">
+                                            <button type="button" class="btn-edit" onclick="otvoriModalEdit(@v.Id, '@v.Name.Replace("'", "\\'")', @v.CategoryID, '@v.Contact.Replace("'", "\\'")', '@v.BasePrice')">Izmijeni</button>
+                                            <a href="@Url.Action("ObrisiVendora", "Admin", new { id = v.Id })" class="btn-del" onclick="return confirm('Da li ste sigurni da želite obrisati ovog vendora?');">Obriši</a>
+                                        </div>
+                                    </td>
                                 </tr>
                             }
                         }
@@ -303,5 +668,87 @@
             </div>
         </div>
     </div>
+
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="zatvoriModalEdit()">×</button>
+            <h2 class="modal-title">✏️ Izmijeni Podatke</h2>
+            <form action="@Url.Action("AzurirajVendora", "Admin")" method="post" enctype="multipart/form-data" class="form-inline" style="grid-template-columns: 1fr;">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="editId" />
+                <div class="form-group">
+                    <label>Naziv</label>
+                    <input type="text" name="naziv" id="editNaziv" required />
+                </div>
+                <div class="form-group">
+                    <label>Kategorija</label>
+                    <select name="kategorijaId" id="editKategorija" required>
+                        @if (kategorije != null)
+                        {
+                            foreach (var kat in kategorije)
+                            {
+                                <option value="@kat.Id">@kat.CategoryName</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Kontakt</label>
+                    <input type="text" name="kontakt" id="editKontakt" required />
+                </div>
+                <div class="form-group">
+                    <label>Cijena (€)</label>
+                    <input type="number" name="cijena" id="editCijena" step="0.01" required />
+                </div>
+                <div class="form-group">
+                    <label>Promijeni Sliku (Opciono)</label>
+                    <input type="file" name="slikaFajlUredi" accept="image/*" style="background: rgba(0,0,0,0.05); padding: 9px;" />
+                </div>
+                <button type="submit" class="btn-submit-modal">Sačuvaj Promjene</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("hamburgerToggle").addEventListener("click", function () {
+            var nav = document.getElementById("navContainer");
+            nav.classList.toggle("active");
+            var mobileLogout = document.querySelector(".logout-btn.mobile-only");
+            if (nav.classList.contains("active")) {
+                this.innerHTML = "✕";
+                mobileLogout.style.display = "flex";
+            } else {
+                this.innerHTML = "☰";
+                mobileLogout.style.display = "none";
+            }
+        });
+
+        function toggleForma() {
+            var panel = document.getElementById("panelForma");
+            var dugme = document.getElementById("btnToggleForm");
+            if (panel.style.display === "none") {
+                panel.style.display = "block";
+                dugme.innerHTML = "Zatvori formu";
+                dugme.style.background = "var(--logo-pink)";
+            } else {
+                panel.style.display = "none";
+                dugme.innerHTML = "Kreiraj Novog Saradnika";
+                dugme.style.background = "var(--logo-green)";
+            }
+        }
+
+        function otvoriModalEdit(id, naziv, kategorijaId, kontakt, cijenaStr) {
+            document.getElementById('editId').value = id;
+            document.getElementById('editNaziv').value = naziv;
+            document.getElementById('editKategorija').value = kategorijaId;
+            document.getElementById('editKontakt').value = kontakt;
+            document.getElementById('editCijena').value = parseFloat(cijenaStr.toString().replace(',', '.'));
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function zatvoriModalEdit() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
