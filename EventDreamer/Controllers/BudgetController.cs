@@ -8,23 +8,41 @@ namespace EventDreamer.Controllers
 {
     public class BudgetController : Controller
     {
-        // Povezivanje sa tvojom pravom bazom
         private EventDreamerDBEntities db = new EventDreamerDBEntities();
 
         // GET: Budget
         public ActionResult Index()
         {
-            // Zaštita od neulogovanih
             if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
 
-            // Povlačimo sve troškove iz prave baze
+            // Za potrebe analize, uzećemo prvi događaj u bazi
+            // (U realnom sistemu ovdje bi prosljeđivala ID selektovanog događaja)
+            var prviDogadjaj = db.Events.FirstOrDefault();
+
+            if (prviDogadjaj != null)
+            {
+                // POZIV TVOJE STORED PROCEDURE IZ BAZE: AnalizaTroskovaDogadjaja
+                // Pokrećemo proceduru i mapiramo rezultat na našu pomoćnu klasu TrosakAnalizaRow
+                var analiza = db.Database.SqlQuery<TrosakAnalizaRow>(
+                    "EXEC AnalizaTroskovaDogadjaja @p_EventID = {0}", prviDogadjaj.Id
+                ).FirstOrDefault();
+
+                if (analiza != null)
+                {
+                    ViewBag.NazivDogadjaja = analiza.Title;
+                    ViewBag.Ukupno = analiza.TotalBudget;
+                    ViewBag.Potroseno = analiza.UkupnoPotroseno;
+                    ViewBag.Preostalo = analiza.PreostaliBudzet;
+                }
+            }
+            else
+            {
+                ViewBag.Ukupno = 0;
+                ViewBag.Potroseno = 0;
+                ViewBag.Preostalo = 0;
+            }
+
             var sviTroskovi = db.Expenses.ToList();
-
-            // Izračunavanje statistike na osnovu pravih iznosa (koristimo ActualAmount)
-            ViewBag.Ukupno = sviTroskovi.Sum(t => t.ActualAmount);
-            ViewBag.Placeno = sviTroskovi.Where(t => t.IsPaid).Sum(t => t.ActualAmount);
-            ViewBag.Preostalo = ViewBag.Ukupno - ViewBag.Placeno;
-
             return View(sviTroskovi);
         }
 
@@ -34,13 +52,16 @@ namespace EventDreamer.Controllers
         {
             if (!string.IsNullOrEmpty(naziv))
             {
+                var prviDogadjaj = db.Events.FirstOrDefault();
+                int dogadjajId = prviDogadjaj != null ? prviDogadjaj.Id : 1;
+
                 var noviTrosak = new Expens
                 {
                     ExpenseName = naziv,
                     PlannedAmount = planirano,
                     ActualAmount = stvarno,
                     IsPaid = (placeno == "Da"),
-                    EventID = 1 // Privremeno vezujemo za prvi događaj zbog stranog ključa
+                    EventID = dogadjajId
                 };
 
                 db.Expenses.Add(noviTrosak);
@@ -66,5 +87,14 @@ namespace EventDreamer.Controllers
             if (disposing) db.Dispose();
             base.Dispose(disposing);
         }
+    }
+
+    // POMOĆNA KLASA: Mora imati identične nazive i tipove kolona kao SELECT u tvojoj SQL proceduri!
+    public class TrosakAnalizaRow
+    {
+        public string Title { get; set; }
+        public decimal TotalBudget { get; set; }
+        public decimal UkupnoPotroseno { get; set; }
+        public decimal PreostaliBudzet { get; set; }
     }
 }

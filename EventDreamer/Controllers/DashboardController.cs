@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using EventDreamer.Models;
@@ -7,7 +8,6 @@ namespace EventDreamer.Controllers
 {
     public class DashboardController : Controller
     {
-        // Povezujemo se na pravu bazu
         private EventDreamerDBEntities db = new EventDreamerDBEntities();
 
         // GET: Dashboard
@@ -31,6 +31,18 @@ namespace EventDreamer.Controllers
             // Izvlačimo samo događaje trenutno ulogovanog korisnika
             var mojiDogadjaji = db.Events.Where(e => e.UserID == userId).ToList();
 
+            // OVDJE POZIVAMO TVOJU SQL FUNKCIJU IZ BAZE: BrojPotvrdjenihGostiju
+            var potvrdjeniGostiPoDogadjaju = new Dictionary<int, int>();
+            foreach (var e in mojiDogadjaji)
+            {
+                // Izvršavamo funkciju nad svakim pojedinačnim ID-jem događaja
+                int brojGostiju = db.Database.SqlQuery<int>("SELECT dbo.BrojPotvrdjenihGostiju({0})", e.Id).FirstOrDefault();
+                potvrdjeniGostiPoDogadjaju.Add(e.Id, brojGostiju);
+            }
+
+            // Šaljemo rječnik u View kako bismo ispisali broj gostiju pored svakog događaja
+            ViewBag.PotvrdjeniGosti = potvrdjeniGostiPoDogadjaju;
+
             return View(mojiDogadjaji);
         }
 
@@ -43,7 +55,6 @@ namespace EventDreamer.Controllers
 
             if (!string.IsNullOrEmpty(title))
             {
-                // Uzimamo prvi tip događaja iz baze da bismo ispunili obavezno polje EventTypesId
                 var prviTip = db.EventTypes.FirstOrDefault();
                 int tipId = prviTip != null ? prviTip.Id : 1;
 
@@ -58,7 +69,7 @@ namespace EventDreamer.Controllers
                 };
 
                 db.Events.Add(noviDogadjaj);
-                db.SaveChanges(); // Trajno snimanje u SQL!
+                db.SaveChanges();
             }
             return RedirectToAction("MojiDogadjaji");
         }

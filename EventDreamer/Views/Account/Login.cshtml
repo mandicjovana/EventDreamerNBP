@@ -1,143 +1,188 @@
-﻿@model EventDreamer.Models.LoginViewModel
-@{
-    ViewBag.Title = "Prijava";
+﻿@{
     Layout = null;
 }
-
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Prijavi se - EventDreamer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Prijava - EventDreamer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <style>
-        body, html {
+        :root {
+            --logo-pink: #F6DEEA;
+            --logo-green: #BCC5AA;
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            height: 100%;
-            font-family: 'Montserrat', sans-serif;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
-        /* Pozadina je sada čista i identična kao na Home stranici, sa blagim zatamnjenjem */
-        .bg-image {
-            background-image: linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)), url('/Images/pozadina.png');
+
+        body {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url('/Images/pozadina.png');
             background-size: cover;
             background-position: center;
-            height: 100%;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .auth-container {
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-        /* Kartica sa pravim staklenim efektom kroz koji se vidi jasna pozadina */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 40px;
-            width: 380px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .card-title {
-            font-size: 26px;
-            font-weight: 700;
-            color: #000;
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            text-align: left;
-            margin-bottom: 20px;
-        }
-
-            .form-group label {
-                display: block;
-                font-weight: 700;
-                font-size: 14px;
-                margin-bottom: 8px;
-                color: #000;
-            }
-
-        .form-control {
+            min-height: 100vh;
+            padding: 20px;
             width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.6);
-            background: rgba(255, 255, 255, 0.8);
-            box-sizing: border-box;
-            font-size: 14px;
         }
 
-        .btn-pink {
+        .auth-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            color: #111;
+        }
+
+        .auth-card h2 {
+            margin-bottom: 25px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #111;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #111;
+        }
+
+        .input-group input {
+             width: 100%;
+             padding: 14px 15px;
+             background: rgba(255, 255, 255, 0.5);
+             border: 1px solid rgba(255, 255, 255, 0.6);
+             border-radius: 12px;
+             font-size: 1rem;
+             color: #222;
+             outline: none;
+             transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+             background: rgba(255, 255, 255, 0.8);
+             border-color: #fff;
+             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .auth-btn {
             width: 100%;
             padding: 14px;
-            background: #f3d1e0;
+            background: var(--logo-pink);
+            color: #222;
             border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 16px;
-            color: #000;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
             cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
-            .btn-pink:hover {
-                background: #e0b8cb;
-            }
+        .auth-btn:hover {
+            background: var(--logo-green);
+            color: #222;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
 
-        .footer-text {
+        .auth-link {
+            display: inline-block;
             margin-top: 20px;
-            font-size: 13px;
-            font-weight: 600;
+            color: #111;
+            font-size: 0.9rem;
+            text-decoration: none;
+            font-weight: 500;
         }
 
-            .footer-text a {
-                color: #000;
-                font-weight: 700;
-                text-decoration: underline;
+        .auth-link:hover {
+            text-decoration: underline;
+        }
+
+        /* responsive za mobilne telefone*/
+        @@media (max-width: 480px) {
+            .auth-container {
+                padding: 15px;
             }
 
-        .text-danger {
-            color: #cc0000;
-            font-size: 12px;
-            margin-top: 5px;
-            display: block;
-            font-weight: 600;
+            .auth-card {
+                padding: 30px 20px !important;
+                width: 92% !important;
+                max-width: 340px !important;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .auth-card h2 {
+                font-size: 1.5rem !important;
+                margin-bottom: 20px;
+            }
+
+            .input-group {
+                margin-bottom: 15px;
+            }
+
+            .input-group input {
+                padding: 12px;
+                font-size: 0.95rem;
+            }
+
+            .auth-btn {
+                padding: 12px;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="bg-image">
-        <div class="glass-card">
-            <div class="card-title">Prijavi se</div>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2>Prijavi se</h2>
 
-            @using (Html.BeginForm("Login", "Account", FormMethod.Post))
-            {
-                @Html.AntiForgeryToken()
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-                <div class="form-group">
+            <form action="@Url.Action("Login", "Account")" method="post">
+                <div class="input-group">
                     <label>Email</label>
-                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Unesite email" })
-                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                    <input type="email" name="Email" required placeholder="Unesite email" />
                 </div>
-
-                <div class="form-group">
+                <div class="input-group">
                     <label>Lozinka</label>
-                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Unesite lozinku" })
-                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                    <input type="password" name="Password" required placeholder="Unesite lozinku" />
                 </div>
 
-                <button type="submit" class="btn-pink">Uloguj se</button>
+                <button type="submit" class="auth-btn">Prijavi se</button>
+            </form>
 
-                <div class="footer-text">
-                    Nemate nalog? <a href="@Url.Action("Register", "Account")">Registrujte se</a>
-                </div>
-            }
+            <a href="@Url.Action("Register", "Account")" class="auth-link">Nemate nalog? <strong>Registrujte se</strong></a>
         </div>
     </div>
 

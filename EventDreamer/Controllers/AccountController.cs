@@ -8,7 +8,7 @@ namespace EventDreamer.Controllers
 {
     public class AccountController : Controller
     {
-        // Koristimo tvoj pravi Entity Framework kontekst iz modela
+        // Entity Framework kontekst iz modela
         private EventDreamerDBEntities db = new EventDreamerDBEntities();
 
         // GET: Account/Login
@@ -25,19 +25,17 @@ namespace EventDreamer.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Tražimo korisnika u pravoj tabeli "Users"
-                // Napomena: Ako ti se kolone u User.cs zovu na našem jeziku (npr. Lozinka umjesto Password), samo ih prepravi ovdje
+                // trazimo korisnika iz tabele Users
                 var korisnik = db.Users.FirstOrDefault(u => u.Email == model.Email && u.Password == model.Password);
 
                 if (korisnik != null)
                 {
-                    // Punimo podatke u sesiju
+                    // popunimo sesiju podacima
                     Session["UserEmail"] = korisnik.Email;
                     Session["UserFirstName"] = korisnik.FirstName ?? "Korisnik";
                     Session["UserID"] = korisnik.Id;
 
-                    // --- PRAVA RASKRSNICA ZA ULOGE (Preko RoleId) ---
-                    // Pretpostavljamo da je Admin npr. RoleId == 1 (ili provjeravamo preko RoleName)
+                    // za uloge preko RoleId
                     if (korisnik.RoleId == 1 || korisnik.Email.ToLower().Contains("admin"))
                     {
                         Session["IsAdmin"] = true;
@@ -72,7 +70,7 @@ namespace EventDreamer.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Provjera da li email već postoji u tabeli Users
+                // da li email vec postoji u tabeli Users
                 var postojiKorisnik = db.Users.Any(u => u.Email == model.Email);
                 if (postojiKorisnik)
                 {
@@ -80,20 +78,20 @@ namespace EventDreamer.Controllers
                     return View(model);
                 }
 
-                // Kreiramo novog korisnika u bazi
+                // kreiramo novog Koirisnika
                 var noviKorisnik = new User
                 {
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     Email = model.Email,
                     Password = model.Password,
-                    RoleId = 2 // Po defaultu 2 (npr. običan korisnik/klijent)
+                    RoleId = 2 
                 };
 
                 db.Users.Add(noviKorisnik);
                 db.SaveChanges();
 
-                // Automatski login nakon registracije
+                // kad se registrujemo automatska prijava
                 Session["UserEmail"] = noviKorisnik.Email;
                 Session["UserFirstName"] = noviKorisnik.FirstName;
                 Session["UserID"] = noviKorisnik.Id;

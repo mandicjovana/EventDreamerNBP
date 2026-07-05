@@ -14,6 +14,7 @@
             padding: 0;
             height: 100%;
             font-family: 'Montserrat', sans-serif;
+            background: #f4eade;
         }
 
         .bg-image {
@@ -79,6 +80,20 @@
             margin-bottom: 30px;
         }
 
+        .event-info-panel {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            font-weight: 700;
+            font-size: 16px;
+            color: #222;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 5px solid #2a9d8f;
+        }
+
         h2 {
             margin-top: 0;
             font-weight: 700;
@@ -97,17 +112,28 @@
             border-radius: 15px;
             text-align: center;
             font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
         }
 
             .stat-card span {
                 display: block;
-                font-size: 24px;
+                font-size: 26px;
+                font-family: 'Arial Black', sans-serif;
                 margin-top: 10px;
-                color: #e63946;
+                color: #222;
+            }
+
+            .stat-card.total span {
+                color: #000;
             }
 
             .stat-card.green span {
                 color: #2a9d8f;
+            }
+
+            .stat-card.remaining span {
+                color: #e63946;
             }
 
         .glass-table {
@@ -134,7 +160,12 @@
             border-radius: 6px;
             font-weight: 600;
             font-size: 13px;
+            transition: 0.2s;
         }
+
+            .btn-del:hover {
+                background: #cc0000;
+            }
 
         .form-inline {
             display: grid;
@@ -162,7 +193,12 @@
             font-weight: 700;
             cursor: pointer;
             height: 40px;
+            transition: 0.2s;
         }
+
+            .btn-add:hover {
+                background: #222;
+            }
     </style>
 </head>
 <body>
@@ -180,10 +216,17 @@
         </div>
         <div class="main-content">
 
+            @if (ViewBag.NazivDogadjaja != null)
+            {
+                <div class="event-info-panel">
+                    📊 Aktivni pregled za događaj: <span style="color: #000;">@ViewBag.NazivDogadjaja</span>
+                </div>
+            }
+
             <div class="stats-grid">
-                <div class="stat-card">Ukupni Troškovi <span>@ViewBag.Ukupno €</span></div>
-                <div class="stat-card green">Plaćeno do sada <span style="color:#2a9d8f;">@ViewBag.Placeno €</span></div>
-                <div class="stat-card">Preostalo za uplatu <span>@ViewBag.Preostalo €</span></div>
+                <div class="stat-card total">Predviđeni Budžet <span>@ViewBag.Ukupno €</span></div>
+                <div class="stat-card green">Ukupno Potrošeno <span>@ViewBag.Potroseno €</span></div>
+                <div class="stat-card remaining">Preostali Budžet <span>@ViewBag.Preostalo €</span></div>
             </div>
 
             <div class="glass-panel">
@@ -225,18 +268,29 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var t in Model)
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var t in Model)
+                            {
+                                <tr>
+                                    <td style="font-weight: 600;">@t.ExpenseName</td>
+                                    <td>@t.PlannedAmount €</td>
+                                    <td>@t.ActualAmount €</td>
+                                    <td>
+                                        <span style="padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight:700; background: @(t.IsPaid ? "#d4edda" : "#f8d7da"); color: @(t.IsPaid ? "#155724" : "#721c24");">
+                                            @(t.IsPaid ? "Plaćeno" : "Dugovanje")
+                                        </span>
+                                    </td>
+                                    <td><a href="@Url.Action("ObrisiTrosak", "Budget", new { id = t.Id })" class="btn-del">Obriši</a></td>
+                                </tr>
+                            }
+                        }
+                        else
                         {
                             <tr>
-                                <td style="font-weight: 600;">@t.ExpenseName</td>
-                                <td>@t.PlannedAmount €</td>
-                                <td>@t.ActualAmount €</td>
-                                <td>
-                                    <span style="padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight:700; background: @(t.IsPaid ? "#d4edda" : "#f8d7da"); color: @(t.IsPaid ? "#155724" : "#721c24");">
-                                        @(t.IsPaid ? "Plaćeno" : "Dugovanje")
-                                    </span>
+                                <td colspan="5" style="text-align: center; padding: 20px; color: #666; font-weight: 500;">
+                                    Trenutno nema unijetih troškova za ovaj događaj.
                                 </td>
-                                <td><a href="@Url.Action("ObrisiTrosak", "Budget", new { id = t.Id })" class="btn-del">Obriši</a></td>
                             </tr>
                         }
                     </tbody>

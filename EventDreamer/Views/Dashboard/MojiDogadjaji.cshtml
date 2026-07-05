@@ -286,6 +286,23 @@
                                 <span>Budžet: <strong>@e.TotalBudget €</strong></span>
                             </div>
 
+                            <div class="e-detail" style="margin-top: 12px; font-weight: 600; color: #2e7d32;">
+                                <span class="e-icon" style="background: #e8f5e9;">✔️</span>
+                                <span>
+                                    Potvrđenih gostiju:
+                                    <strong>
+                                        @if (ViewBag.PotvrdjeniGosti != null && ((Dictionary<int, int>)ViewBag.PotvrdjeniGosti).ContainsKey(e.Id))
+                                        {
+                                            @(((Dictionary<int, int>)ViewBag.PotvrdjeniGosti)[e.Id])
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                    </strong>
+                                </span>
+                            </div>
+
                             <div class="e-actions">
                                 <a href="@Url.Action("Index", "Dashboard")" class="btn-manage">Upravljaj</a>
                                 <a href="@Url.Action("ObrisiDogadjaj", "Dashboard", new { id = e.Id })" class="btn-delete" title="Obriši događaj">🗑️</a>
