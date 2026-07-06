@@ -35,7 +35,7 @@ namespace EventDreamer.Controllers
                         paramCijena
                     ).ToList();
                 }
-                catch (System.Exception ex)
+                catch (Exception)
                 {
                     // Fallback opcija ako mapiranje baci grešku
                     listaVendora = db.Vendors.Where(v => v.CategoryID == kategorijaId && v.BasePrice <= selektovanaCijena).ToList();
@@ -56,6 +56,7 @@ namespace EventDreamer.Controllers
 
             return View(listaVendora);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult PosaljiUpit(int vendorId, int eventId, int? brojGostiju, string odabraniPaket)
@@ -69,8 +70,9 @@ namespace EventDreamer.Controllers
             {
                 decimal konacnaCijena = vendor.BasePrice;
                 string opisTroska = $"Angažovanje: {vendor.Name}";
+                string novaLokacija = null;
 
-                // Ako je vendor Sala / Restoran (Kategorija 1)
+                // Računanje ako je vendor Sala / Restoran (Kategorija 1)
                 if (vendor.CategoryID == 1)
                 {
                     int gosti = brojGostiju ?? 1;
@@ -91,27 +93,31 @@ namespace EventDreamer.Controllers
                     konacnaCijena = cijenaPoOsobi * gosti;
                     opisTroska += $" ({nazivPaketa}, za {gosti} osoba - {cijenaPoOsobi} € po osobi)";
 
-                    // Mijenjamo lokaciju događaja u bazi u naziv restorana
-                    dogadjaj.Location = vendor.Name;
+                    // Spremamo lokaciju da je proslijedimo SQL-u
+                    novaLokacija = vendor.Name;
                 }
 
-                var noviTrosak = new Expens
+                try
                 {
-                    ExpenseName = opisTroska,
-                    PlannedAmount = konacnaCijena,
-                    ActualAmount = konacnaCijena,
-                    IsPaid = true, // 🚀 PROMIJENJENO: Trošak se odmah postavlja kao PLAĆEN!
-                    EventID = dogadjaj.Id
-                };
+                    // 🚀 Pozivamo transakcionu SQL proceduru da završi posao
+                    db.Database.ExecuteSqlCommand(
+                        "EXEC sp_RezervisiVendora @p_EventID={0}, @p_NovaLokacija={1}, @p_OpisTroska={2}, @p_KonacnaCijena={3}",
+                        dogadjaj.Id,
+                        novaLokacija != null ? (object)novaLokacija : DBNull.Value,
+                        opisTroska,
+                        konacnaCijena
+                    );
 
-                db.Expenses.Add(noviTrosak);
-                db.SaveChanges();
-
-                TempData["Poruka"] = $"🎉 Uspješno ste rezervisali: {vendor.Name}! Trošak od {konacnaCijena} € je dodat u budžet i označen kao plaćen.";
+                    TempData["Poruka"] = $"🎉 Uspješno ste rezervisali: {vendor.Name}! Trošak od {konacnaCijena} € je dodat u budžet i označen kao plaćen.";
+                }
+                catch (Exception)
+                {
+                    TempData["Greska"] = "Sistem nije uspio da sačuva rezervaciju u bazu.";
+                }
             }
             else
             {
-                TempData["Greska"] = "Došlo je do greške prilikom rezervacije.";
+                TempData["Greska"] = "Došlo je do greške prilikom rezervacije. Nepostojeći vendor ili događaj.";
             }
 
             return RedirectToAction("Index");

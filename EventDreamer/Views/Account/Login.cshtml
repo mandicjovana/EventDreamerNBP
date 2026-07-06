@@ -76,21 +76,57 @@
         }
 
         .input-group input {
-             width: 100%;
-             padding: 14px 15px;
-             background: rgba(255, 255, 255, 0.5);
-             border: 1px solid rgba(255, 255, 255, 0.6);
-             border-radius: 12px;
-             font-size: 1rem;
-             color: #222;
-             outline: none;
-             transition: all 0.3s ease;
+            width: 100%;
+            padding: 14px 15px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            font-size: 1rem;
+            color: #222;
+            outline: none;
+            transition: all 0.3s ease;
         }
 
         .input-group input:focus {
-             background: rgba(255, 255, 255, 0.8);
-             border-color: #fff;
-             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.8);
+            border-color: #fff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        /* za svg oko wrapper */
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .password-wrapper input {
+            padding-right: 45px; 
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            color: #555;
+            display: flex;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        .toggle-password:hover {
+            color: var(--logo-green);
+        }
+
+        .svg-icon {
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            width: 20px;
+            height: 20px;
         }
 
         .auth-btn {
@@ -156,6 +192,10 @@
                 font-size: 0.95rem;
             }
 
+            .password-wrapper input {
+                padding-right: 40px;
+            }
+
             .auth-btn {
                 padding: 12px;
                 font-size: 1rem;
@@ -170,19 +210,30 @@
             <h2>Prijavi se</h2>
             @if (TempData["PorukaNakonRegistracije"] != null)
             {
-                <div style="background-color: var(--logo-green); color: #155724; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-weight: 500; font-size: 0.9rem; ">
+                <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-weight: 600; font-size: 0.9rem; ">
                     @TempData["PorukaNakonRegistracije"]
                 </div>
             }
 
             <form action="@Url.Action("Login", "Account")" method="post">
-                @Html.AntiForgeryToken() <div class="input-group">
+                @Html.AntiForgeryToken()
+
+                <div class="input-group">
                     <label>Email</label>
                     <input type="email" name="Email" required placeholder="Unesite email" />
                 </div>
+
                 <div class="input-group">
                     <label>Lozinka</label>
-                    <input type="password" name="Password" required placeholder="Unesite lozinku" />
+                    <div class="password-wrapper">
+                        <input type="password" name="Password" id="lozinkaLogin" required placeholder="Unesite lozinku" />
+                        <span class="toggle-password" onclick="togglePasswordVisibility('lozinkaLogin', 'eyeIconLogin')">
+                            <svg id="eyeIconLogin" class="svg-icon" viewBox="0 0 24 24">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                        </span>
+                    </div>
                 </div>
 
                 <button type="submit" class="auth-btn">Prijavi se</button>
@@ -192,5 +243,21 @@
         </div>
     </div>
 
+    <script>function togglePasswordVisibility(inputId, iconId) {
+            var input = document.getElementById(inputId);
+            var icon = document.getElementById(iconId);
+
+            if (input.type === "password") {
+                // za otrkiravanje lozinke
+                input.type = "text";
+                // SVG ya otvoreno oko
+                icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            } else {
+                // da se opet sakrije lozinka
+                input.type = "password";
+                // SVG za prekriženo oko
+                icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+            }
+        }</script>
 </body>
 </html>

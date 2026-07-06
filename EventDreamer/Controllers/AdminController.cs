@@ -14,15 +14,31 @@ namespace EventDreamer.Controllers
         {
             if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
 
-            ViewBag.UkupnoKorisnika = db.Users.Count();
-            ViewBag.UkupnoDogadjaja = db.Events.Count();
+            // procedura za admin statistiku iz baze
+            var stats = db.Database.SqlQuery<AdminStatsRow>("EXEC AdminStatistika").FirstOrDefault();
 
-            // brojanje vendora po kategorijama vendora
-            ViewBag.BrojRestorana = db.Vendors.Count(v => v.CategoryID == 1);
-            ViewBag.BrojFotografa = db.Vendors.Count(v => v.CategoryID == 2);
-            ViewBag.BrojMuzike = db.Vendors.Count(v => v.CategoryID == 3);
-            ViewBag.BrojDekoracije = db.Vendors.Count(v => v.CategoryID == 4);
-            ViewBag.BrojTorti = db.Vendors.Count(v => v.CategoryID == 5);
+            // ako baza vrati podatke
+            if (stats != null)
+            {
+                ViewBag.UkupnoKorisnika = stats.UkupnoKorisnika;
+                ViewBag.UkupnoDogadjaja = stats.UkupnoDogadjaja;
+                ViewBag.BrojRestorana = stats.BrojRestorana;
+                ViewBag.BrojFotografa = stats.BrojFotografa;
+                ViewBag.BrojMuzike = stats.BrojMuzike;
+                ViewBag.BrojDekoracije = stats.BrojDekoracije;
+                ViewBag.BrojTorti = stats.BrojTorti;
+            }
+            else
+            {
+                // u slucaju da je baza prazna
+                ViewBag.UkupnoKorisnika = 0; 
+                ViewBag.UkupnoDogadjaja = 0;
+                ViewBag.BrojRestorana = 0; 
+                ViewBag.BrojFotografa = 0;
+                ViewBag.BrojMuzike = 0; 
+                ViewBag.BrojDekoracije = 0; 
+                ViewBag.BrojTorti = 0;
+            }
 
             return View();
         }
@@ -42,7 +58,7 @@ namespace EventDreamer.Controllers
             var korisnik = db.Users.Find(id);
             if (korisnik != null)
             {
-                // da ne mozemo da obrisemo admina
+                // da ne možemo obrisati admina
                 if (korisnik.RoleId == 1)
                 {
                     TempData["Greska"] = "Ne možete obrisati administratorski nalog!";
@@ -51,26 +67,14 @@ namespace EventDreamer.Controllers
 
                 try
                 {
-                    // prvo brisemo sve podatke vezane za korisnika
-                    var dogadjajiKorisnika = db.Events.Where(e => e.UserID == id).ToList();
-                    foreach (var dogadjaj in dogadjajiKorisnika)
-                    {
-                        db.Guests.RemoveRange(db.Guests.Where(g => g.EventId == dogadjaj.Id));
-                        db.Tasks.RemoveRange(db.Tasks.Where(t => t.EventID == dogadjaj.Id));
-                        db.Expenses.RemoveRange(db.Expenses.Where(ex => ex.EventID == dogadjaj.Id));
-                    }
-                    // onda i same dogadjaje
-                    db.Events.RemoveRange(dogadjajiKorisnika);
+                    // procedura iz baze za brisanje korisnika
+                    db.Database.ExecuteSqlCommand("EXEC sp_ObrisiKorisnika @p_KorisnikID = {0}", id);
 
-                    // i na kraju korisnika
-                    db.Users.Remove(korisnik);
-                    db.SaveChanges();
-
-                    TempData["Poruka"] = $"Korisnik {korisnik.FirstName} {korisnik.LastName} i svi njegovi podaci su uspješno obrisani.";
+                    TempData["Poruka"] = $"Korisnik {korisnik.FirstName} {korisnik.LastName} i svi njegovi podaci su uspješno obrisani iz sistema.";
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    TempData["Greska"] = "Došlo je do greške u bazi prilikom brisanja korisnika.";
+                    TempData["Greska"] = "Došlo je do greške u bazi prilikom brisanja korisnika: " + ex.Message;
                 }
             }
             return RedirectToAction("ManageUsers");
@@ -83,35 +87,21 @@ namespace EventDreamer.Controllers
             ViewBag.Kategorije = db.VendorCategories.ToList();
 
             int kategorijaId = filterKategorijaId ?? 0;
-            decimal maxCijena = 5000.00m; // Podrazumijevana maksimalna cijena
-
             System.Collections.Generic.List<Vendor> rezultatiVendori;
 
-            // 🚀 AKO JE IZABRANA KATEGORIJA (Id > 0) -> KORISTIMO PROCEDURU
+            // poziv funkcije iz baze
+            string nazivKategorije = db.Database.SqlQuery<string>(
+                "SELECT dbo.FiltrirajVendoraPoKategoriji({0})", kategorijaId
+            ).FirstOrDefault();
+
+            ViewBag.NazivKategorije = nazivKategorije;
+
+            // filtriranje liste vendora na osnovu ID
             if (kategorijaId > 0)
             {
-                var paramKategorija = new System.Data.SqlClient.SqlParameter("@p_KategorijaID", System.Data.SqlDbType.Int) { Value = kategorijaId };
-                var paramCijena = new System.Data.SqlClient.SqlParameter("@p_MaxCijena", System.Data.SqlDbType.Decimal) { Value = maxCijena };
-
-                try
-                {
-                    rezultatiVendori = db.Database.SqlQuery<Vendor>(
-                        "EXEC PretragaVendora @p_KategorijaID = @p_KategorijaID, @p_MaxCijena = @p_MaxCijena",
-                        paramKategorija,
-                        paramCijena
-                    ).ToList();
-                }
-                catch (System.Exception ex)
-                {
-                    TempData["Greska"] = "Greška u proceduri: " + ex.Message;
-                    rezultatiVendori = db.Vendors.Where(v => v.CategoryID == kategorijaId).ToList();
-                }
-
+                rezultatiVendori = db.Vendors.Where(v => v.CategoryID == kategorijaId).ToList();
                 ViewBag.IsFiltered = true;
-                var kat = db.VendorCategories.Find(kategorijaId);
-                ViewBag.NazivKategorije = kat != null ? kat.CategoryName : "Filtrirano";
             }
-            // 🚀 AKO JE KLIKNUTO IZ SIDEBARA (Svi vendori, Id == 0) -> POVLAČIMO SVE IZ BAZE
             else
             {
                 rezultatiVendori = db.Vendors.ToList();
@@ -235,6 +225,17 @@ namespace EventDreamer.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+        //pomocna funkcija za statistiku iz baze
+        public class AdminStatsRow
+        {
+            public int UkupnoKorisnika { get; set; }
+            public int UkupnoDogadjaja { get; set; }
+            public int BrojRestorana { get; set; }
+            public int BrojFotografa { get; set; }
+            public int BrojMuzike { get; set; }
+            public int BrojDekoracije { get; set; }
+            public int BrojTorti { get; set; }
         }
     }
 }

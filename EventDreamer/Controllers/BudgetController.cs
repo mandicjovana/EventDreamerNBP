@@ -10,7 +10,7 @@ namespace EventDreamer.Controllers
     {
         private EventDreamerDBEntities db = new EventDreamerDBEntities();
 
-        // GET: Budget
+        // za budzet
         public ActionResult Index(int? eventId)
         {
             if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
@@ -27,7 +27,7 @@ namespace EventDreamer.Controllers
             }
 
             //koji dogadjaj posmatramo iz padajuceg menija
-            // ako je korisnik izabrao iz menija, uzimamo taj. Inače uzimamo njegov prvi.
+            // ako je korisnik izabrao iz menija, uzimamo taj. inače uzimamo njegov prvi.
             int odabraniDogadjajId = eventId ?? mojiDogadjaji.First().Id;
 
             // posaljemo padajuci meni u View
@@ -62,41 +62,48 @@ namespace EventDreamer.Controllers
             return View(troskoviDogadjaja);
         }
 
-        // POST: Budget/DodajTrosak
+        // za dodavanje troska
         [HttpPost]
         public ActionResult DodajTrosak(string naziv, decimal planirano, decimal stvarno, string placeno, int EventId)
         {
             if (!string.IsNullOrEmpty(naziv))
             {
-                var noviTrosak = new Expens // novi trosak
-                {
-                    ExpenseName = naziv,
-                    PlannedAmount = planirano,
-                    ActualAmount = stvarno,
-                    IsPaid = (placeno == "Da"),
-                    EventID = EventId // trosak vezujemo za odredjeni dogadjaj
-                };
+                // string u bit
+                int jeLiPlaceno = (placeno == "Da") ? 1 : 0;
 
-                db.Expenses.Add(noviTrosak);
-                db.SaveChanges();
+                try
+                {
+                    // poziv procedure
+                    db.Database.ExecuteSqlCommand(
+                        "EXEC sp_DodajTrosak @p_EventID={0}, @p_Naziv={1}, @p_Planirano={2}, @p_Stvarno={3}, @p_Placeno={4}",
+                        EventId, naziv, planirano, stvarno, jeLiPlaceno
+                    );
+                }
+                catch (Exception ex)
+                {
+                    // greska ako neko unese negativan stvarni trosak zbog trigera iz baze
+                    TempData["Greska"] = ex.Message;
+                }
             }
 
-            // vratimo na Index ali smo idalje na istom dogadjaju
             return RedirectToAction("Index", new { eventId = EventId });
         }
 
-        // GET: Budget/ObrisiTrosak
+        // za brisanje troska
         public ActionResult ObrisiTrosak(int id, int eventId)
         {
-            var trosak = db.Expenses.Find(id);
-            if (trosak != null)
+            try
             {
-                db.Expenses.Remove(trosak);
-                db.SaveChanges();
+                // procedura za brisanje
+                db.Database.ExecuteSqlCommand("EXEC sp_ObrisiTrosak @p_TrosakID={0}", id);
             }
+            catch (Exception)
+            {
+                TempData["Greska"] = "Došlo je do greške prilikom brisanja troška.";
+            }
+
             return RedirectToAction("Index", new { eventId = eventId });
         }
-        
         protected override void Dispose(bool disposing)
         {
             if (disposing) db.Dispose();

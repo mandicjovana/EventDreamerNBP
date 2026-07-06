@@ -14,6 +14,8 @@
         :root {
             --logo-pink: #F6DEEA;
             --logo-green: #BCC5AA;
+            --text-dark: #111;
+            --text-muted: #555;
         }
 
         * {
@@ -28,6 +30,7 @@
             overflow-x: hidden;
         }
 
+        /* pozadina */
         .bg-image {
             background-image: url('/Images/pozadina.png');
             background-size: cover;
@@ -48,7 +51,64 @@
             z-index: 1;
         }
 
-        /* SIDEBAR */
+        .main-content {
+            position: relative;
+            z-index: 10;
+            flex: 1;
+            padding: 50px;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            color: var(--text-dark);
+        }
+
+        /* svg ikonice */
+        .svg-icon {
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            flex-shrink: 0;
+            display: inline-block;
+        }
+
+        .icon-sm {
+            width: 16px;
+            height: 16px;
+        }
+
+        .icon-md {
+            width: 20px;
+            height: 20px;
+        }
+
+        .icon-lg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .title-icon {
+            vertical-align: text-bottom;
+            margin-right: 8px;
+            width: 28px;
+            height: 28px;
+        }
+
+        .btn-icon {
+            margin-right: 6px;
+            vertical-align: middle;
+            width: 16px;
+            height: 16px;
+        }
+
+        /* sidebar */
         .sidebar {
             position: relative;
             z-index: 10;
@@ -63,20 +123,19 @@
             flex-shrink: 0;
         }
 
-        .mobile-header {
-            display: none;
-        }
-
         .sidebar .logo-text {
             font-size: 20px;
             font-weight: 800;
-            color: #111;
+            color: var(--text-dark);
             margin-bottom: 40px;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             text-align: center;
             line-height: 1.4;
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .sidebar-menu {
@@ -104,24 +163,23 @@
         }
 
         .sidebar-menu a:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.9);
-            color: #111;
-            transform: translateX(4px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+             background: rgba(255, 255, 255, 0.9);
+             color: var(--text-dark);
+             transform: translateX(4px);
+             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
         }
 
         .sidebar-menu a.active {
-            background: #111;
-            color: #fff;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-            transform: translateX(4px);
+             background: var(--text-dark);
+             color: #fff;
+             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+             transform: translateX(4px);
         }
 
-        /* dugmad prema logo bojama */
+        /* za dugmice boja sa logoa */
         .logout-btn {
             background: var(--logo-pink);
             color: #222;
-            text-align: center;
             font-weight: 700;
             padding: 14px 20px;
             text-decoration: none;
@@ -130,6 +188,8 @@
             margin-top: auto;
             display: flex;
             justify-content: center;
+            align-items: center;
+            gap: 8px;
             font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -153,7 +213,9 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             text-align: center;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-add:hover, .btn-trigger-form:hover, .btn-submit-modal:hover {
@@ -171,9 +233,7 @@
             margin-bottom: 30px;
         }
 
-        .btn-edit {
-            background: var(--logo-green);
-            color: #222;
+        .btn-edit, .btn-del {
             padding: 8px 15px;
             text-decoration: none;
             border-radius: 8px;
@@ -182,6 +242,13 @@
             cursor: pointer;
             border: none;
             transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+            color: #222;
+        }
+
+        .btn-edit {
+            background: var(--logo-green);
         }
 
         .btn-edit:hover {
@@ -191,15 +258,6 @@
 
         .btn-del {
             background: var(--logo-pink);
-            color: #222;
-            padding: 8px 15px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 12px;
-            transition: all 0.3s ease;
-            display: inline-block;
-            text-align: center;
         }
 
         .btn-del:hover {
@@ -207,23 +265,7 @@
             transform: translateY(-2px);
         }
 
-        .main-content {
-            position: relative;
-            z-index: 10;
-            flex: 1;
-            padding: 50px;
-            overflow-y: auto;
-            width: 100%;
-        }
-
-        .page-title {
-            text-align: center;
-            font-size: 28px;
-            font-weight: 800;
-            margin-bottom: 30px;
-            color: #111;
-        }
-
+        /* za panele i forme */
         .glass-panel {
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(15px);
@@ -235,77 +277,13 @@
         }
 
         .glass-panel h2 {
+            display: flex;
+            align-items: center;
             margin-top: 0;
             font-weight: 800;
             font-size: 22px;
             color: #111;
             margin-bottom: 25px;
-        }
-
-        /* kartice vendora */
-        .vendor-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            width: 100%;
-        }
-
-        .vendor-card {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 100%;
-            box-sizing: border-box;
-            transition: 0.3s;
-        }
-
-        .vendor-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            background: rgba(255, 255, 255, 0.8);
-        }
-
-        .img-placeholder {
-            width: 100%;
-            height: 180px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            background-size: cover;
-            background-position: center;
-            background-color: #ddd;
-        }
-
-        .v-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin: 0 0 8px 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .v-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            background: var(--logo-pink);
-            color: #222;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .v-info {
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 5px;
-            color: #444;
         }
 
         .form-inline {
@@ -335,6 +313,7 @@
             font-weight: 600;
         }
 
+        /* za edit modal */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -372,6 +351,16 @@
             font-weight: bold;
         }
 
+        .modal-title {
+            display: flex;
+            align-items: center;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            margin-top: 0;
+        }
+
+        /* za tabelu vendora */
         .list-container {
             max-width: 1100px;
             margin: 0 auto;
@@ -405,13 +394,28 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
+        .v-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: var(--logo-pink);
+            color: #222;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
         .action-btns {
             display: flex;
             gap: 10px;
             justify-content: flex-start;
         }
 
-        /* RESPONSIVE */
+        /* za responsive dizajn*/
+        .mobile-header {
+            display: none;
+        }
+
         @@media screen and (max-width: 768px) {
             .bg-image {
                 flex-direction: column;
@@ -442,12 +446,14 @@
                 color: #111;
                 text-transform: uppercase;
                 margin: 0;
+                display: flex;
+                align-items: center;
+                gap: 8px;
             }
 
             .hamburger-btn {
                 background: none;
                 border: none;
-                font-size: 28px;
                 cursor: pointer;
                 color: #111;
                 padding: 0;
@@ -560,34 +566,120 @@
 
         <div class="sidebar">
             <div class="mobile-header">
-                <button class="hamburger-btn" id="hamburgerToggle">☰</button>
-                <h2 class="logo-text-mobile">⚙️ Admin</h2>
+                <button class="hamburger-btn" id="hamburgerToggle">
+                    <svg class="svg-icon icon-md" id="menuIcon" viewBox="0 0 24 24">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <h2 class="logo-text-mobile">
+                    <svg class="svg-icon icon-md" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                    Admin
+                </h2>
             </div>
 
-            <div class="logo-text">⚙️ Admin sistem</div>
+            <div class="logo-text">
+                <svg class="svg-icon icon-lg" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                Admin sistem
+            </div>
+
             <ul class="sidebar-menu" id="navContainer">
-                <li><a href="@Url.Action("Index", "Admin")">📊 Statistika</a></li>
-                <li><a href="@Url.Action("ManageUsers", "Admin")">👥 Svi korisnici</a></li>
-                <li><a href="@Url.Action("ManageVendors", "Admin")" class="active">🏪 Vendori</a></li>
-                <li><a href="@Url.Action("ManageEvents", "Admin")">📅 Svi događaji</a></li>
-                <li><a href="@Url.Action("Index", "Home")" class="logout-btn mobile-only" style="display: none;">Odjavi se</a></li>
+                <li>
+                    <a href="@Url.Action("Index", "Admin")">
+                        <svg class="svg-icon icon-md" viewBox="0 0 24 24">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        Statistika
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("ManageUsers", "Admin")">
+                        <svg class="svg-icon icon-md" viewBox="0 0 24 24">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        Svi korisnici
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("ManageVendors", "Admin")" class="active">
+                        <svg class="svg-icon icon-md" viewBox="0 0 24 24">
+                            <path d="M3 3h18v4l-1.5 9h-15L3 7z"></path>
+                            <line x1="12" y1="16" x2="12" y2="22"></line>
+                            <line x1="8" y1="22" x2="16" y2="22"></line>
+                        </svg>
+                        Vendori
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("ManageEvents", "Admin")">
+                        <svg class="svg-icon icon-md" viewBox="0 0 24 24">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Svi događaji
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index", "Home")" class="logout-btn mobile-only" style="display: none;">Odjavi se</a>
+                </li>
             </ul>
-            <a href="@Url.Action("Index", "Home")" class="logout-btn desktop-only">Odjavi se</a>
+            <a href="@Url.Action("Index", "Home")" class="logout-btn desktop-only">
+                <svg class="svg-icon icon-md" viewBox="0 0 24 24">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Odjavi se
+            </a>
         </div>
 
         <div class="main-content">
             @if (ViewBag.IsFiltered != null && (bool)ViewBag.IsFiltered)
             {
                 <div class="glass-panel" style="padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
-                    <h2 style="margin: 0; font-size: 18px;">🔎 Prikazujete samo: <span style="color: #2a9d8f;">@ViewBag.NazivKategorije</span></h2>
+                    <h2 style="margin: 0; font-size: 18px;">
+                        <svg class="svg-icon title-icon icon-md" viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        Prikazujete samo: <span style="color: #2a9d8f; margin-left: 5px;">@ViewBag.NazivKategorije</span>
+                    </h2>
                     <a href="@Url.Action("ManageVendors", "Admin")" class="btn-add" style="text-decoration: none; padding: 12px 20px; line-height: normal; height: auto; grid-column: auto; text-align:center;">Prikaži sve</a>
                 </div>
             }
             else
             {
-                <button class="btn-trigger-form" id="btnToggleForm" onclick="toggleForma()">Kreiraj Novog Saradnika</button>
+                <button class="btn-trigger-form" id="btnToggleForm" onclick="toggleForma()">
+                    <svg class="svg-icon btn-icon" viewBox="0 0 24 24" id="btnIcon">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span id="btnText">Kreiraj novog vendora</span>
+                </button>
                 <div class="glass-panel" id="panelForma" style="display: none; transition: 0.3s;">
-                    <h2>➕ Unos novog vendora </h2>
+                    <h2>
+                        <svg class="svg-icon title-icon" viewBox="0 0 24 24">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="12" y1="18" x2="12" y2="12"></line>
+                            <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
+                        Unos novog vendora
+                    </h2>
                     <form action="@Url.Action("DodajVendora", "Admin")" method="post" enctype="multipart/form-data" class="form-inline">
                         @Html.AntiForgeryToken()
                         <div class="form-group">
@@ -620,13 +712,30 @@
                             <input type="file" name="slikaFajl" accept="image/*" style="background: rgba(255,255,255,0.8); padding: 9px;" />
                         </div>
 
-                        <button type="submit" class="btn-add">Sačuvaj u bazu</button>
+                        <button type="submit" class="btn-add">
+                            <svg class="svg-icon btn-icon" viewBox="0 0 24 24">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                <polyline points="7 3 7 8 15 8"></polyline>
+                            </svg>
+                            Sačuvaj u bazu
+                        </button>
                     </form>
                 </div>
             }
 
             <div class="glass-panel" style="padding: 20px 0;">
-                <h2 style="padding: 0 30px;">📋 Lista vendora</h2>
+                <h2 style="padding: 0 30px;">
+                    <svg class="svg-icon title-icon" viewBox="0 0 24 24">
+                        <line x1="8" y1="6" x2="21" y2="6"></line>
+                        <line x1="8" y1="12" x2="21" y2="12"></line>
+                        <line x1="8" y1="18" x2="21" y2="18"></line>
+                        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                    </svg>
+                    Lista vendora
+                </h2>
                 <table class="glass-table">
                     <thead>
                         <tr>
@@ -671,7 +780,13 @@
     <div class="modal-overlay" id="editModal">
         <div class="modal-content">
             <button class="close-modal" onclick="zatvoriModalEdit()">×</button>
-            <h2 class="modal-title">✏️ Izmijeni podatke</h2>
+            <h2 class="modal-title">
+                <svg class="svg-icon title-icon" viewBox="0 0 24 24">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Izmijeni podatke
+            </h2>
             <form action="@Url.Action("AzurirajVendora", "Admin")" method="post" enctype="multipart/form-data" class="form-inline" style="grid-template-columns: 1fr;">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" id="editId" />
@@ -703,7 +818,14 @@
                     <label>Promijeni sliku (Opciono)</label>
                     <input type="file" name="slikaFajlUredi" accept="image/*" style="background: rgba(0,0,0,0.05); padding: 9px;" />
                 </div>
-                <button type="submit" class="btn-submit-modal">Sačuvaj promjene</button>
+                <button type="submit" class="btn-submit-modal">
+                    <svg class="svg-icon btn-icon" viewBox="0 0 24 24">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                        <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                    Sačuvaj promjene
+                </button>
             </form>
         </div>
     </div>
@@ -713,11 +835,13 @@
             var nav = document.getElementById("navContainer");
             nav.classList.toggle("active");
             var mobileLogout = document.querySelector(".logout-btn.mobile-only");
+            var menuIcon = document.getElementById("menuIcon");
+
             if (nav.classList.contains("active")) {
-                this.innerHTML = "✕";
+                menuIcon.innerHTML = '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>';
                 mobileLogout.style.display = "flex";
             } else {
-                this.innerHTML = "☰";
+                menuIcon.innerHTML = '<line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>';
                 mobileLogout.style.display = "none";
             }
         });
@@ -725,13 +849,18 @@
         function toggleForma() {
             var panel = document.getElementById("panelForma");
             var dugme = document.getElementById("btnToggleForm");
+            var textSpana = document.getElementById("btnText");
+            var ikonicasvg = document.getElementById("btnIcon");
+
             if (panel.style.display === "none") {
                 panel.style.display = "block";
-                dugme.innerHTML = "Zatvori formu";
+                textSpana.innerHTML = "Zatvori formu";
+                ikonicasvg.innerHTML = '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>';
                 dugme.style.background = "var(--logo-pink)";
             } else {
                 panel.style.display = "none";
-                dugme.innerHTML = "Kreiraj Novog Saradnika";
+                textSpana.innerHTML = "Kreiraj novog vendora";
+                ikonicasvg.innerHTML = '<line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>';
                 dugme.style.background = "var(--logo-green)";
             }
         }
