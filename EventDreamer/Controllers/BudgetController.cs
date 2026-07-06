@@ -96,7 +96,7 @@ namespace EventDreamer.Controllers
             }
             return RedirectToAction("Index", new { eventId = eventId });
         }
-
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing) db.Dispose();

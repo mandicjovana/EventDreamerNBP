@@ -66,43 +66,42 @@ namespace EventDreamer.Controllers
         // POST: Account/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(RegisterViewModel model)
+        public ActionResult Register(string FirstName, string LastName, string Email, string Password)
         {
-            if (ModelState.IsValid)
+            // provjeravamo osnovne podatke iz forme
+            if (!string.IsNullOrEmpty(FirstName) && !string.IsNullOrEmpty(LastName) &&
+                !string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(Password))
             {
-                // da li email vec postoji u tabeli Users
-                var postojiKorisnik = db.Users.Any(u => u.Email == model.Email);
+                // provjeravamo da li već postoji korisnik sa tim emailom
+                var postojiKorisnik = db.Users.Any(u => u.Email.ToLower() == Email.ToLower());
                 if (postojiKorisnik)
                 {
                     ModelState.AddModelError("", "Korisnik sa ovom email adresom već postoji.");
-                    return View(model);
+                    return View();
                 }
 
-                // kreiramo novog Koirisnika
+                // kreiramo novog korisnika
                 var noviKorisnik = new User
                 {
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    Email = model.Email,
-                    Password = model.Password,
-                    RoleId = 2 
+                    FirstName = FirstName,
+                    LastName = LastName,
+                    Email = Email,
+                    Password = Password,
+                    RoleId = 2 // Običan korisnik
                 };
 
                 db.Users.Add(noviKorisnik);
                 db.SaveChanges();
 
-                // kad se registrujemo automatska prijava
-                Session["UserEmail"] = noviKorisnik.Email;
-                Session["UserFirstName"] = noviKorisnik.FirstName;
-                Session["UserID"] = noviKorisnik.Id;
-                Session["IsAdmin"] = false;
+                // saljemo na login stranicu sa porukom o uspješnoj registraciji
+                TempData["PorukaNakonRegistracije"] = "Uspješno ste se registrovali! Sada se možete prijaviti sa svojim podacima.";
 
-                return RedirectToAction("Index", "Dashboard");
+                return RedirectToAction("Login", "Account");
             }
 
-            return View(model);
+            ModelState.AddModelError("", "Sva polja su obavezna.");
+            return View();
         }
-
         // GET: Account/Logout
         public ActionResult Logout()
         {

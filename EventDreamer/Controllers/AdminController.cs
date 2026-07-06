@@ -81,28 +81,46 @@ namespace EventDreamer.Controllers
             if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
 
             ViewBag.Kategorije = db.VendorCategories.ToList();
-            var vendoriUpit = db.Vendors.AsQueryable();
 
-            // za filter
-            if (filterKategorijaId.HasValue && filterKategorijaId.Value > 0)
+            int kategorijaId = filterKategorijaId ?? 0;
+            decimal maxCijena = 5000.00m; // Podrazumijevana maksimalna cijena
+
+            System.Collections.Generic.List<Vendor> rezultatiVendori;
+
+            // 🚀 AKO JE IZABRANA KATEGORIJA (Id > 0) -> KORISTIMO PROCEDURU
+            if (kategorijaId > 0)
             {
-                vendoriUpit = vendoriUpit.Where(v => v.CategoryID == filterKategorijaId.Value);
+                var paramKategorija = new System.Data.SqlClient.SqlParameter("@p_KategorijaID", System.Data.SqlDbType.Int) { Value = kategorijaId };
+                var paramCijena = new System.Data.SqlClient.SqlParameter("@p_MaxCijena", System.Data.SqlDbType.Decimal) { Value = maxCijena };
 
-                // trazimo na osnovu filtera
+                try
+                {
+                    rezultatiVendori = db.Database.SqlQuery<Vendor>(
+                        "EXEC PretragaVendora @p_KategorijaID = @p_KategorijaID, @p_MaxCijena = @p_MaxCijena",
+                        paramKategorija,
+                        paramCijena
+                    ).ToList();
+                }
+                catch (System.Exception ex)
+                {
+                    TempData["Greska"] = "Greška u proceduri: " + ex.Message;
+                    rezultatiVendori = db.Vendors.Where(v => v.CategoryID == kategorijaId).ToList();
+                }
+
                 ViewBag.IsFiltered = true;
-                var kat = db.VendorCategories.Find(filterKategorijaId.Value);
+                var kat = db.VendorCategories.Find(kategorijaId);
                 ViewBag.NazivKategorije = kat != null ? kat.CategoryName : "Filtrirano";
             }
+            // 🚀 AKO JE KLIKNUTO IZ SIDEBARA (Svi vendori, Id == 0) -> POVLAČIMO SVE IZ BAZE
             else
             {
-                // ako filter nije postavljen, prikazujemo sve vendore
+                rezultatiVendori = db.Vendors.ToList();
                 ViewBag.IsFiltered = false;
             }
 
-            return View(vendoriUpit.ToList());
+            return View(rezultatiVendori);
         }
-
-        // POST: Dodavanje vendora sa uploadom slike sa kompjutera
+        // dodavanje vendora sa uploadom slike sa kompjutera
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult DodajVendora(string naziv, int kategorijaId, string kontakt, decimal cijena, HttpPostedFileBase slikaFajl)
@@ -146,7 +164,7 @@ namespace EventDreamer.Controllers
 
             return RedirectToAction("ManageVendors");
         }
-        // 🚀 NOVO: POST Akcija za izmjenu postojećeg vendora
+        // izmjena vendora
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AzurirajVendora(int id, string naziv, int kategorijaId, string kontakt, decimal cijena, HttpPostedFileBase slikaFajlUredi)
@@ -208,35 +226,7 @@ namespace EventDreamer.Controllers
             var sviDogadjaji = db.Events.Include("User").Include("Expenses").ToList();
             return View(sviDogadjaji);
         }
-
-        // brisanje događaja i svih njegovih zavisnih podataka
-        public ActionResult ObrisiDogadjaj(int id)
-        {
-            if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
-
-            var dogadjaj = db.Events.Find(id);
-            if (dogadjaj != null)
-            {
-                try
-                {
-                    // prvo brišemo goste, zadatke i troškove vezane za taj događaj
-                    db.Guests.RemoveRange(db.Guests.Where(g => g.EventId == id));
-                    db.Tasks.RemoveRange(db.Tasks.Where(t => t.EventID == id));
-                    db.Expenses.RemoveRange(db.Expenses.Where(ex => ex.EventID == id));
-
-                    // zatim brišemo sam događaj
-                    db.Events.Remove(dogadjaj);
-                    db.SaveChanges();
-
-                    TempData["Poruka"] = $"Događaj '{dogadjaj.Title}' je uspješno obrisan.";
-                }
-                catch (Exception)
-                {
-                    TempData["Greska"] = "Došlo je do greške prilikom brisanja događaja.";
-                }
-            }
-            return RedirectToAction("ManageEvents");
-        }
+        
 
         protected override void Dispose(bool disposing)
         {

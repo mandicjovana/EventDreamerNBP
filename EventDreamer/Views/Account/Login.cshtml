@@ -168,6 +168,12 @@
     <div class="auth-container">
         <div class="auth-card">
             <h2>Prijavi se</h2>
+            @if (TempData["PorukaNakonRegistracije"] != null)
+            {
+                <div style="background-color: var(--logo-green); color: #155724; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-weight: 500; font-size: 0.9rem; ">
+                    @TempData["PorukaNakonRegistracije"]
+                </div>
+            }
 
             <form action="@Url.Action("Login", "Account")" method="post">
                 @Html.AntiForgeryToken() <div class="input-group">

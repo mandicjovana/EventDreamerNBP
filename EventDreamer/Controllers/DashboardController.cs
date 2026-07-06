@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using EventDreamer.Models;
@@ -17,6 +18,7 @@ namespace EventDreamer.Controllers
 
             int userId = (int)Session["UserID"];
             ViewBag.BrojDogadjaja = db.Events.Count(e => e.UserID == userId);
+            ViewBag.BrojKorisnika = db.Users.Count();
 
             return View();
         }
@@ -28,8 +30,10 @@ namespace EventDreamer.Controllers
 
             int userId = (int)Session["UserID"];
 
+            // Povlačenje svih događaja za ulogovanog korisnika
             var mojiDogadjaji = db.Events.Where(e => e.UserID == userId).ToList();
 
+            // 1. Brojanje potvrđenih gostiju preko SQL skalarne funkcije
             var potvrdjeniGostiPoDogadjaju = new Dictionary<int, int>();
             foreach (var e in mojiDogadjaji)
             {
@@ -37,10 +41,18 @@ namespace EventDreamer.Controllers
                 potvrdjeniGostiPoDogadjaju.Add(e.Id, brojGostiju);
             }
             ViewBag.PotvrdjeniGosti = potvrdjeniGostiPoDogadjaju;
-            //za lokacije
-            int idKategorijeRestorana = 1;
 
-            // Vendori ciji je CategoryID = 1 su u bazi restorani/sale
+            // 🚀 POPRAVLJENO: Brojanje ZADATAKA sada koristi tvoju novu SQL skalarnu funkciju iz baze!
+            var brojZadatakaPoDogadjaju = new Dictionary<int, int>();
+            foreach (var e in mojiDogadjaji)
+            {
+                int brojZadataka = db.Database.SqlQuery<int>("SELECT dbo.BrojZadataka({0})", e.Id).FirstOrDefault();
+                brojZadatakaPoDogadjaju.Add(e.Id, brojZadataka);
+            }
+            ViewBag.BrojZadataka = brojZadatakaPoDogadjaju;
+
+            // Lokacije (Kategorija 1 su Restorani/Sale)
+            int idKategorijeRestorana = 1;
             var restorani = db.Vendors
                               .Where(v => v.CategoryID == idKategorijeRestorana)
                               .Select(v => v.Name)
@@ -51,7 +63,7 @@ namespace EventDreamer.Controllers
             return View(mojiDogadjaji);
         }
 
-        // POST: za dodavanje dogadjaja na Dashboardu
+        // POST: Dashboard/DodajDogadjaj
         [HttpPost]
         public ActionResult DodajDogadjaj(string title, DateTime? date, string location, decimal totalBudget)
         {
@@ -79,14 +91,29 @@ namespace EventDreamer.Controllers
             return RedirectToAction("MojiDogadjaji");
         }
 
-        // za brisanje dogadjaja sa Dashboarda
+        // GET: Dashboard/ObrisiDogadjaj
         public ActionResult ObrisiDogadjaj(int id)
         {
+            if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
+
             var dogadjaj = db.Events.Find(id);
             if (dogadjaj != null)
             {
-                db.Events.Remove(dogadjaj);
-                db.SaveChanges();
+                try
+                {
+                    // Kaskadno čišćenje tabela prije brisanja glavnog događaja
+                    db.Guests.RemoveRange(db.Guests.Where(g => g.EventId == id));
+                    db.Tasks.RemoveRange(db.Tasks.Where(t => t.EventID == id));
+                    db.Expenses.RemoveRange(db.Expenses.Where(ex => ex.EventID == id));
+
+                    // Tek na kraju brišemo sam događaj
+                    db.Events.Remove(dogadjaj);
+                    db.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    TempData["Greska"] = "Došlo je do greške prilikom brisanja događaja.";
+                }
             }
             return RedirectToAction("MojiDogadjaji");
         }

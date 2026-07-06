@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin Vendori - EventDreamer</title>
+    <title>Admin vendori - EventDreamer</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -117,7 +117,7 @@
             transform: translateX(4px);
         }
 
-        /* --- SVA DUGMAD PREMA LOGO BOJAMA --- */
+        /* dugmad prema logo bojama */
         .logout-btn {
             background: var(--logo-pink);
             color: #222;
@@ -207,7 +207,6 @@
             transform: translateY(-2px);
         }
 
-        /* MAIN CONTENT */
         .main-content {
             position: relative;
             z-index: 10;
@@ -243,7 +242,7 @@
             margin-bottom: 25px;
         }
 
-        /* MREŽA VENDORA (KARTICE) */
+        /* kartice vendora */
         .vendor-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -565,7 +564,7 @@
                 <h2 class="logo-text-mobile">⚙️ Admin</h2>
             </div>
 
-            <div class="logo-text">⚙️ Admin Sistem</div>
+            <div class="logo-text">⚙️ Admin sistem</div>
             <ul class="sidebar-menu" id="navContainer">
                 <li><a href="@Url.Action("Index", "Admin")">📊 Statistika</a></li>
                 <li><a href="@Url.Action("ManageUsers", "Admin")">👥 Svi korisnici</a></li>
@@ -588,11 +587,11 @@
             {
                 <button class="btn-trigger-form" id="btnToggleForm" onclick="toggleForma()">Kreiraj Novog Saradnika</button>
                 <div class="glass-panel" id="panelForma" style="display: none; transition: 0.3s;">
-                    <h2>➕ Unos Novog Saradnika u Bazu</h2>
+                    <h2>➕ Unos novog vendora </h2>
                     <form action="@Url.Action("DodajVendora", "Admin")" method="post" enctype="multipart/form-data" class="form-inline">
                         @Html.AntiForgeryToken()
                         <div class="form-group">
-                            <label>Naziv Vendora</label>
+                            <label>Naziv vendora</label>
                             <input type="text" name="naziv" required placeholder="npr. Bend Matrix" />
                         </div>
                         <div class="form-group">
@@ -612,7 +611,7 @@
                             <input type="text" name="kontakt" required placeholder="067-123-456" />
                         </div>
                         <div class="form-group">
-                            <label>Osnovna Cijena (€)</label>
+                            <label>Osnovna cijena (€)</label>
                             <input type="number" name="cijena" step="0.01" required placeholder="0.00" />
                         </div>
 
@@ -627,7 +626,7 @@
             }
 
             <div class="glass-panel" style="padding: 20px 0;">
-                <h2 style="padding: 0 30px;">📋 Lista Odobrenih Vendora</h2>
+                <h2 style="padding: 0 30px;">📋 Lista vendora</h2>
                 <table class="glass-table">
                     <thead>
                         <tr>
@@ -672,7 +671,7 @@
     <div class="modal-overlay" id="editModal">
         <div class="modal-content">
             <button class="close-modal" onclick="zatvoriModalEdit()">×</button>
-            <h2 class="modal-title">✏️ Izmijeni Podatke</h2>
+            <h2 class="modal-title">✏️ Izmijeni podatke</h2>
             <form action="@Url.Action("AzurirajVendora", "Admin")" method="post" enctype="multipart/form-data" class="form-inline" style="grid-template-columns: 1fr;">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" id="editId" />
@@ -701,10 +700,10 @@
                     <input type="number" name="cijena" id="editCijena" step="0.01" required />
                 </div>
                 <div class="form-group">
-                    <label>Promijeni Sliku (Opciono)</label>
+                    <label>Promijeni sliku (Opciono)</label>
                     <input type="file" name="slikaFajlUredi" accept="image/*" style="background: rgba(0,0,0,0.05); padding: 9px;" />
                 </div>
-                <button type="submit" class="btn-submit-modal">Sačuvaj Promjene</button>
+                <button type="submit" class="btn-submit-modal">Sačuvaj promjene</button>
             </form>
         </div>
     </div>
